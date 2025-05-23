@@ -144,14 +144,18 @@ export default function TopBar() {
                 )}
               </div>
 
-              {["Home", "About", "Contact"].map((item) => (
+              { [
+  { name: "Home", link: "/" },
+  { name: "About", link: "/about" },
+  { name: "Contact", link: "/contact" },
+]?.map((item) => (
                 <Link
                   key={item}
-                  to={`/${item.toLowerCase()}`}
+                  to={`/${item?.link}`}
                   className="hover:bg-[#FFD700] hover:text-black px-3 py-2 rounded transition duration-300"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  {item}
+                  {item?.name}
                 </Link>
               ))}
             </nav>
