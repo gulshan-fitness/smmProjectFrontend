@@ -343,7 +343,7 @@ export default function CrosswordPuzzlePlay() {
                 {row?.map((cellActive, colIndex) => (
                   <td
                     key={colIndex}
-                    className={`border border-gray-400 sm:w-10 sm:h-10 h-7 w-7 text-center align-middle relative ${cellActive ? '' : 'bg-black'}`}
+                    className={`border border-gray-400 w-10 h-10 text-center align-middle relative ${cellActive ? '' : 'bg-black'}`}
                   >
                     {cellActive ? (
                       <>
