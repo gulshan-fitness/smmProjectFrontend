@@ -81,7 +81,7 @@ export default function SudokoEdit() {
       solution,
     };
 
-    axios.puta(
+    axios.put(
       `${import.meta.env.VITE_API_BASE_URL}${import.meta.env.VITE_SUDOKO_URL}edit/${id}`,
       payload,
       {
