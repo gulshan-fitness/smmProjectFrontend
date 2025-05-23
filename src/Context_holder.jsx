@@ -2,6 +2,14 @@ import axios from "axios";
 import React, { createContext, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import {
+  MdDashboard,
+  MdGridOn,
+  MdFunctions,
+  MdAdd,
+  MdVisibility,
+} from "react-icons/md";
+
 
 const Context = createContext();
 
@@ -122,37 +130,31 @@ export default function Context_holder(props) {
   };
   
 
-  const menu_links = [
-    {
-      name: "Dashboard",
-      url: "",
-    },
-
-    {
-      name: "Crossword Puzzle",
-      url: "",
-
-      subitems: [
-
-        { name: "Add", url: "crosswordpuzzle/add"},
-
-        { name: "View", url: "crosswordpuzzle/view"},
-
-      ],
-    },
-
-    {
-      name: "Sudoko",
-      url: "",
-
-      subitems: [
-        { name: "Add", url: "sudoko/add" },
-        { name: "View", url: "sudoko/view" },
-      ],
-    },
-
-   
-  ];
+ const menu_links = [
+  {
+    name: "Dashboard",
+    url: "",
+    icon: <MdDashboard className="text-xl"  />,
+  },
+  {
+    name: "Crossword Puzzle",
+    url: "",
+    icon: <MdGridOn  className="text-xl" />,
+    subitems: [
+      { name: "Add", url: "crosswordpuzzle/add", icon: <MdAdd /> },
+      { name: "View", url: "crosswordpuzzle/view", icon: <MdVisibility /> },
+    ],
+  },
+  {
+    name: "Sudoko",
+    url: "",
+    icon: <MdFunctions  className="text-xl" />,
+    subitems: [
+      { name: "Add", url: "sudoko/add", icon: <MdAdd /> },
+      { name: "View", url: "sudoko/view", icon: <MdVisibility /> },
+    ],
+  },
+];
 
   return (
     <Context.Provider
