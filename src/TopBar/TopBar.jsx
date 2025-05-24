@@ -74,7 +74,7 @@ export default function TopBar() {
 
               {/* Dropdown */}
               {isProfileMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-black border border-[#FFD700] shadow-lg rounded-lg">
+                <div className="absolute right-0 mt-2 px-[1px] py-[1px] w-48 bg-black border border-[#FFD700] shadow-lg rounded-lg">
                   <Link
                     to="/userprofile"
                     className="block px-4 py-2 hover:bg-[#FFD700] rounded-md hover:text-black transition duration-300"
