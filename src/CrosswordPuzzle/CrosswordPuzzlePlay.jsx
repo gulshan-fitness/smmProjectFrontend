@@ -387,12 +387,14 @@ export default function CrosswordPuzzlePlay() {
     >
       Check Answers
     </button>
-    <button
+{
+      CrosswordPuzzleScore_id&&    <button
       onClick={restartPuzzleHandler}
       className="px-5 py-2 bg-[#111] border border-[#D4AF37] text-[#D4AF37] rounded hover:bg-[#222] font-semibold transition"
     >
       Restart Puzzle
     </button>
+    }
   </div>
 
  
