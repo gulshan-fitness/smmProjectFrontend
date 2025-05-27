@@ -145,7 +145,7 @@ export default function TopBar() {
               </div>
 
               { [
-  { name: "Home", link: "/" },
+  { name: "Home", link: "" },
   { name: "About", link: "/about" },
   { name: "Contact", link: "/contact" },
 ]?.map((item) => (
