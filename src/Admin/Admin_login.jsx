@@ -96,13 +96,7 @@ export default function Admin_login() {
           Login
         </button>
 
-        {/* Sign Up */}
-        <Link to="/adminsignupitslocked" className="text-sm text-[#FFD700] text-center mt-4 block">
-          Don't have an account?{" "}
-          <button className=" font-bold underline hover:text-yellow-400 transition">
-            Sign up
-          </button>
-        </Link>
+        
       </form>
     </div>
   </div>
