@@ -106,7 +106,14 @@ function App() {
 
         {
           path: "/adminsignupitslocked",
-          element: <Admin_sign_up />,
+
+          element: <AdminProtectedRoutes>
+          <Admin_sign_up />
+      </AdminProtectedRoutes>
+          
+          
+
+
         },
 
         
