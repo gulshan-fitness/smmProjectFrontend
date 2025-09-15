@@ -199,6 +199,7 @@ export default function Context_holder(props) {
       { name: "View", url: "sudoko/view", icon: <MdVisibility /> },
     ],
   },
+<<<<<<< HEAD
 
 
     {
@@ -210,6 +211,8 @@ export default function Context_holder(props) {
       { name: "View", url: "riddles/view", icon: <MdVisibility /> },
     ],
   },
+=======
+>>>>>>> 53e941019ebd24a0b9638415395f202b7712fd63
 ];
 
   return (

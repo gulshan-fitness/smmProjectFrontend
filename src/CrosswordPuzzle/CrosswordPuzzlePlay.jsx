@@ -344,7 +344,11 @@ export default function CrosswordPuzzlePlay() {
                 {row?.map((cellActive, colIndex) => (
                   <td
                     key={colIndex}
+<<<<<<< HEAD
                     className={`border border-gray-400 w-10 h-10  text-center align-middle relative ${cellActive ? '' : 'bg-black'}`}
+=======
+                    className={`border border-gray-400 w-10 h-10 text-center align-middle relative ${cellActive ? '' : 'bg-black'}`}
+>>>>>>> 53e941019ebd24a0b9638415395f202b7712fd63
                   >
                     {cellActive ? (
                       <>
@@ -388,7 +392,11 @@ export default function CrosswordPuzzlePlay() {
     >
       Check Answers
     </button>
+<<<<<<< HEAD
     {
+=======
+{
+>>>>>>> 53e941019ebd24a0b9638415395f202b7712fd63
       CrosswordPuzzleScore_id&&    <button
       onClick={restartPuzzleHandler}
       className="px-5 py-2 bg-[#111] border border-[#D4AF37] text-[#D4AF37] rounded hover:bg-[#222] font-semibold transition"
@@ -396,7 +404,10 @@ export default function CrosswordPuzzlePlay() {
       Restart Puzzle
     </button>
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 53e941019ebd24a0b9638415395f202b7712fd63
   </div>
 
  

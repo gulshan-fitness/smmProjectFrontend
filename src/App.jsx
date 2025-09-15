@@ -31,8 +31,11 @@ import SudokoEdit from "./Sudoko/SudokoEdit";
 import RiddleQuiz from "./Riddels/RiddelsPlay";
 
 import TopScroll from "./TopScroll";
+<<<<<<< HEAD
 import RiddlesAdd from "./Admin/Riddles/RiddlesAdd";
 import RiddlesView from "./Admin/Riddles/RiddlesView";
+=======
+>>>>>>> 53e941019ebd24a0b9638415395f202b7712fd63
 
 function App() {
   const { setadmin, setadminToken, setuser, setusertoken, setIsScrolled } =

@@ -40,7 +40,7 @@ setusertoken, setuser,notify  } = useContext(Context);
    
     axios
     .post(
-      `${import.meta.env.VITE_API_BASE_URL}${import.meta.env.VITE_USER_URL}sign_up`,
+      `${import.meta.env.VITE_API_BASE_URL}${import.meta.env.VITE_USER_URL}/sign_up`,
       data
     )
 
