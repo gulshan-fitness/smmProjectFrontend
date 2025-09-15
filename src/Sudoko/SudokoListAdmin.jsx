@@ -32,10 +32,7 @@ export default function SudokoListAdmin() {
       .catch((error) => {});
   };
 
-  const onEdit = (puzzle) => {
-    // Implement your edit logic here or navigate to edit page
-    console.log('Edit puzzle:', puzzle);
-  };
+
 
   return (
     <div className="w-full min-h-screen px-4 sm:px-6 py-8 sm:py-10 bg-gradient-to-br from-[#0a0a0a] via-[#111111] to-[#0a0a0a] text-[#f0e6d2]">

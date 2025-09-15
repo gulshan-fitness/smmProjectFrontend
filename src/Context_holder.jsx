@@ -2,6 +2,14 @@ import axios from "axios";
 import React, { createContext, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import {
+  MdDashboard,
+  MdGridOn,
+  MdFunctions,
+  MdAdd,
+  MdVisibility,
+} from "react-icons/md";
+
 
 const Context = createContext();
 
@@ -27,6 +35,9 @@ export default function Context_holder(props) {
   const [AllSudoko, setAllSudoko] = useState([]);
   const [Sudoko, setSudoko] = useState(null);
 
+    const [AllRiddles, setAllRiddles] = useState([]);
+  const [Riddles, setRiddles] = useState(null);
+
   const notify = (msg, status) => {
     toast(msg, {
       position: "top-right",
@@ -41,6 +52,7 @@ export default function Context_holder(props) {
     localStorage.removeItem("usertoken");
 
     setusertoken("");
+    
   };
 
   const CrosswordPuzzleFetch = (id, user_id) => {
@@ -120,39 +132,85 @@ export default function Context_holder(props) {
 
       .catch((error) => {});
   };
+
+    const RiddlesFetch = (id, query) => {
+   
+
+    let api =`${import.meta.env.VITE_API_BASE_URL}${
+      import.meta.env.VITE_RIDDLES_URL
+    }read`;
+
+    if (id) {
+      api += `/${id}`;
+    }
+
+     if(query){
+
+          api += `${query}`;
+
+    }
+
+
+    axios.get(api)
+
+      .then((success) => {
+        if (success.data.status == 1) {
+
+          const data=success.data.Riddles;
+
+          if (id) {
+            setRiddles(data[0]);
+          }
+
+      
+          else {
+
+            setAllRiddles(data);
+
+          }
+        }
+      })
+
+      .catch((error) => {});
+  };
   
 
-  const menu_links = [
-    {
-      name: "Dashboard",
-      url: "",
-    },
+ const menu_links = [
+  {
+    name: "Dashboard",
+    url: "",
+    icon: <MdDashboard className="text-xl"  />,
+  },
+  {
+    name: "Crossword Puzzle",
+    url: "",
+    icon: <MdGridOn  className="text-xl" />,
+    subitems: [
+      { name: "Add", url: "crosswordpuzzle/add", icon: <MdAdd /> },
+      { name: "View", url: "crosswordpuzzle/view", icon: <MdVisibility /> },
+    ],
+  },
+  {
+    name: "Sudoko",
+    url: "",
+    icon: <MdFunctions  className="text-xl" />,
+    subitems: [
+      { name: "Add", url: "sudoko/add", icon: <MdAdd /> },
+      { name: "View", url: "sudoko/view", icon: <MdVisibility /> },
+    ],
+  },
+
 
     {
-      name: "Crossword Puzzle",
-      url: "",
-
-      subitems: [
-
-        { name: "Add", url: "crosswordpuzzle/add"},
-
-        { name: "View", url: "crosswordpuzzle/view"},
-
-      ],
-    },
-
-    {
-      name: "Sudoko",
-      url: "",
-
-      subitems: [
-        { name: "Add", url: "sudoko/add" },
-        { name: "View", url: "sudoko/view" },
-      ],
-    },
-
-   
-  ];
+    name: "Riddles",
+    url: "",
+    icon: <MdFunctions  className="text-xl" />,
+    subitems: [
+      { name: "Add", url: "riddles/add", icon: <MdAdd /> },
+      { name: "View", url: "riddles/view", icon: <MdVisibility /> },
+    ],
+  },
+];
 
   return (
     <Context.Provider
@@ -191,7 +249,7 @@ export default function Context_holder(props) {
         setSudoko,
         AllSudoko,
         setAllSudoko,
-        SudokoFetch,
+        SudokoFetch,AllRiddles, setAllRiddles,Riddles, setRiddles,RiddlesFetch
       }}
     >
       {props.children}

@@ -140,10 +140,11 @@ const AddCrosswordPuzzle = () => {
           rows={6}
           value={rawGridInput}
           onChange={(e) => setRawGridInput(e.target.value)}
-          placeholder="1 2 3 4 5\n6 # 7 # 8"
+          placeholder=
+          "1 2 3 # 5 # 7 # 8"
           className="w-full px-4 py-3 rounded-xl bg-[#0C0C0C] border border-[#333333] font-mono text-sm text-[#F5DEB3] placeholder:text-[#888] focus:outline-none focus:ring-2 focus:ring-[#FFD700]"
         />
-        <p className="text-xs text-[#888] mt-2">Use <code>#</code> for black cells. Separate rows by newlines.</p>
+        <p className="text-xs text-[#888] mt-2">Use <code>#</code> for black cells.Separate colums by space. Separate rows by newlines.</p>
       </div>
 
       {/* Clue Sections */}

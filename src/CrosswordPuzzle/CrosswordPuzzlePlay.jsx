@@ -13,7 +13,7 @@ export default function CrosswordPuzzlePlay() {
     userGrid,
     setUserGrid,
     CrosswordPuzzleScore_id,
-    CrosswordPuzzlePreviousScore,
+    
   } = useContext(Context);
 
   const { id } = useParams();
@@ -258,6 +258,7 @@ export default function CrosswordPuzzlePlay() {
   };
 
   const restartPuzzleHandler = () => {
+
     if (!CrosswordPuzzleScore_id || !usertoken || !id || !user) return;
 
     axios
@@ -343,7 +344,7 @@ export default function CrosswordPuzzlePlay() {
                 {row?.map((cellActive, colIndex) => (
                   <td
                     key={colIndex}
-                    className={`border border-gray-400 sm:w-10 sm:h-10 h-7 w-7 text-center align-middle relative ${cellActive ? '' : 'bg-black'}`}
+                    className={`border border-gray-400 w-10 h-10  text-center align-middle relative ${cellActive ? '' : 'bg-black'}`}
                   >
                     {cellActive ? (
                       <>
@@ -387,12 +388,15 @@ export default function CrosswordPuzzlePlay() {
     >
       Check Answers
     </button>
-    <button
+    {
+      CrosswordPuzzleScore_id&&    <button
       onClick={restartPuzzleHandler}
       className="px-5 py-2 bg-[#111] border border-[#D4AF37] text-[#D4AF37] rounded hover:bg-[#222] font-semibold transition"
     >
       Restart Puzzle
     </button>
+    }
+
   </div>
 
  

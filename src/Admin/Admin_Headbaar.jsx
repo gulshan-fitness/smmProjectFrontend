@@ -3,6 +3,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FaUserCircle } from 'react-icons/fa';
 import { TiArrowBack } from "react-icons/ti";
 import { Context } from '../Context_holder';
+import {
+  MdHome,
+ 
+} from "react-icons/md";
 
 export default function Admin_Headbaar() {
   const { setadmin, admin, menu_links, setadminToken } = useContext(Context);
@@ -38,13 +42,23 @@ export default function Admin_Headbaar() {
         </div>
 
         {/* Home Link */}
-        <div className="relative items-center md:hidden py-2.5 px-4 mb-1 rounded transition duration-200 hover:bg-[#1c1c1c]  gap-2 group">
-          <Link to="/" className="block group-hover:translate-x-2 duration-300 font-semibold text-lg">
-            Home
+        <div className="relative items-center md:hidden py-2.5 px-4 mb-1 rounded transition 
+        
+        duration-200 hover:bg-[#1c1c1c]  gap-2 group">
+
+  <div className=' flex gap-2 items-center'>
+     <MdHome className='text-2xl' />
+ <Link to="/" className=" group-hover:translate-x-2 duration-300 font-semibold text-lg ">
+         
+          Home 
           </Link>
+  </div>
+
+         
         </div>
 
         {/* Menu Links */}
+        
         {menu_links?.map((data, index) => (
           <div
             key={index}
@@ -52,21 +66,27 @@ export default function Admin_Headbaar() {
               highlight === data.name ? "bg-[#FFD700] text-black" : "text-[#FFD700]"
             } hover:bg-[#1c1c1c]  gap-2 group`}
           >
+
+  <div className=' flex gap-2 items-center'>
+
+                    {data?.icon}
             <Link
               to={data.url}
-              className="block group-hover:translate-x-2 duration-300 font-semibold text-lg"
+              className="block group-hover:translate-x-2 duration-300 whitespace-nowrap truncate font-semibold text-lg"
               onClick={() => page_jump_handler(data)}
             >
               {data.name}
             </Link>
+            </div>
             <div className='gap-2 group-hover:flex hidden mt-1 px-2 rounded-e-md'>
               {data?.subitems?.map((subitem, subIndex) => (
                 <Link
                   key={subIndex}
                   to={subitem.url}
-                  className='text-black bg-[#FFD700] px-3  rounded-md hover:text-[#FFD700] hover:bg-black border border-[#FFD700] transition-all duration-200'
+                  className='text-black bg-[#FFD700] px-2  rounded-md hover:text-[#FFD700] hover:bg-black border border-[#FFD700] flex  items-center gap-1 transition-all duration-200'
                   onClick={() => page_jump_handler(data)}
                 >
+                  {subitem?.icon}
                   {subitem.name}
                 </Link>
               ))}

@@ -17,13 +17,13 @@ export default function AdminProfile() {
 
   return (
 
-    <div className='flex flex-col md:grid md:grid-cols-5 h-screen'>
-      <div className=' '>
+    <div className='flex flex-col md:grid md:grid-cols-8 h-screen'>
+      <div className='md:col-span-2 '>
 
         <Side_bar/>
         
       </div>
-      <div className=' flex-1 md:col-span-4'>
+      <div className=' flex-1 md:col-span-6'>
         <Admin_Headbaar/>
         
           <Outlet />

@@ -8,7 +8,8 @@ import UserProfile from "./UserProfile/UserProfile";
 import AdminProfile from "./Admin/AdminProfile";
 import Admin_login from "./Admin/Admin_login";
 import Admin_sign_up from "./Admin/Admin_sign_up";
-import { useContext, useEffect } from "react";
+import { Suspense, useContext, useEffect } from "react";
+
 
 import Dashboard from "./Admin/Dashboard";
 import SSM from "./SSM";
@@ -27,7 +28,11 @@ import SudokoPlay from "./Sudoko/SudokoPlay";
 import CrosswordPuzzleAdminList from "./CrosswordPuzzle/CrosswordPuzzleAdminList";
 import CrosswordPuzzleEdit from "./CrosswordPuzzle/CrosswordPuzzleEdit";
 import SudokoEdit from "./Sudoko/SudokoEdit";
-import RiddleApp from "./Riddels/RiddelsPlay";
+import RiddleQuiz from "./Riddels/RiddelsPlay";
+
+import TopScroll from "./TopScroll";
+import RiddlesAdd from "./Admin/Riddles/RiddlesAdd";
+import RiddlesView from "./Admin/Riddles/RiddlesView";
 
 function App() {
   const { setadmin, setadminToken, setuser, setusertoken, setIsScrolled } =
@@ -58,28 +63,30 @@ function App() {
     }
   }, []);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
+  const Loading=()=> {
+  return (
+    <div className="h-screen w-screen flex justify-center items-center bg-white">
+      <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#17412D]" />
+    </div>
+  );
+}
 
-    window.addEventListener("scroll", handleScroll);
+  
 
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
+
 
   const routes = createBrowserRouter([
     {
       path: "/",
-      element: <Home />,
+      element: 
+      <>
+      <TopScroll/>
+      <Home />
+      </>
+      ,
 
       children: [
+        
         {
           path: "",
           element: <SSM />,
@@ -102,7 +109,14 @@ function App() {
 
         {
           path: "/adminsignupitslocked",
-          element: <Admin_sign_up />,
+
+          element: <AdminProtectedRoutes>
+          <Admin_sign_up />
+      </AdminProtectedRoutes>
+          
+          
+
+
         },
 
         
@@ -142,7 +156,7 @@ function App() {
           element: (
 
             <UserProtectedRouts>
-<RiddleApp />
+<RiddleQuiz />
             </UserProtectedRouts> 
         ),
         },
@@ -207,12 +221,34 @@ function App() {
           path: "sudoko/edit/:id",
           element: <SudokoEdit/>,
         },
+
+
+                 {
+          path: "riddles/add",
+          element: <RiddlesAdd />,
+        },
+             {
+          path: "riddles/view",
+          element: <RiddlesView />,
+        },
+             {
+          path: "riddles/edit/:id",
+          element: <SudokoEdit/>,
+        },
         
       ],
     },
   ]);
+  <>
+  
+  </>
 
-  return <RouterProvider router={routes} />;
+  return (
+     <Suspense fallback={<Loading />}>
+      <RouterProvider router={routes} />
+    </Suspense>
+ 
+);
 }
 
 export default App;

@@ -8,7 +8,7 @@ export default function Side_bar() {
 
   return (
     <div className="md:flex h-screen hidden sticky top-0 w-full shadow-md shadow-[#FFD700]">
-      <div className="w-full bg-[#0a0a0a] text-[#d4af37] flex flex-col shadow-2xl">
+      <div className="w-full bg-[#0a0a0a]  text-[#d4af37] flex flex-col shadow-2xl">
         {/* Logo Section */}
         <div className="flex items-center justify-center py-3 px-3 text-lg font-bold bg-[#ffd700] text-black shadow-md">
           <Link to={""}>
@@ -28,25 +28,39 @@ export default function Side_bar() {
                     : "text-[#ffd700]"
                 } gap-2 group`}
               >
+
+                <div className=' flex gap-2 items-center'>
+
+                    {data?.icon}
                 {/* Main Link */}
                 <Link
                   to={data.url}
-                  className="gap-2 flex group-hover:translate-x-1 duration-300 font-medium text-md"
+                  className="  group-hover:translate-x-1 whitespace-nowrap truncate duration-300 font-medium text-md"
                 >
-                  <div>{data.name}</div>
+                 { data.name}
                 </Link>
+                </div>
+              
 
                 {/* Sub Items */}
                 <div className="gap-2 mt-1 text-sm group-hover:flex hidden py-1 px-2 rounded-e-md">
                   {data?.subitems?.map((subitem, subIndex) => (
-                    <Link
+
+ 
+
+     <Link
                       key={subIndex}
                       to={subitem.url}
-                      className="text-black border border-[#ffd700] bg-[#ffd700] px-3 py-1 rounded-md hover:text-[#ffd700] hover:bg-[#111] hover:border-[#ffd700] transition-all duration-300 hover:shadow-md shadow-[#ffd700]"
+                      className="text-black border border-[#ffd700] bg-[#ffd700] px-2 py-1 rounded-md hover:text-[#ffd700] hover:bg-[#111] hover:border-[#ffd700] transition-all duration-300 hover:shadow-md shadow-[#ffd700] flex  items-center gap-1 "
                       onClick={() => sethighlight(data.name)}
                     >
+                       {subitem?.icon}
                       {subitem.name}
                     </Link>
+
+
+
+                 
                   ))}
                 </div>
               </div>

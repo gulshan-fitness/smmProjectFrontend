@@ -1,105 +1,283 @@
-import React, { useState } from 'react';
 
-const riddlesData = [
-  {
-    question: "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?",
-    answer: "An echo",
-    category: "Wordplay",
-    trait: "Openness"
+
+
+
+import React, { useState, useEffect, useContext } from "react";
+import axios from "axios";
+import { Context } from "../Context_holder";
+import { useParams, useSearchParams } from "react-router-dom";
+import { HiLightBulb } from "react-icons/hi";
+
+
+
+export default function RiddlesPlay() {
+
+
+  const { usertoken, notify,AllRiddles,Riddles,RiddlesFetch
+      } = useContext(Context);
+
+  const [step, setStep] = useState(true); // 'chooseType' or 'play'
+  const [type, setType] = useState("");
+  const [currentRiddle,setcurrentRiddle]=useState(null)
+   const [ShowClue,setShowClue]=useState(false)
+
+  const [riddleCount, setRiddleCount] = useState(0);
+
+  const [guess, setGuess] = useState("");
+  const [attempts, setAttempts] = useState(0);
+  const [showAnswer, setShowAnswer] = useState(false);
+  
+const [searchParams, setSearchParams] = useSearchParams();
+
+
+
+
+ 
+useEffect(
+  ()=>{
+
+const Query={}
+
+if( type!==""){
+
+  Query.type=type
+  setSearchParams(Query)
+RiddlesFetch(null,window.location.search)
+
+}
+
+else setSearchParams()
+
+
   },
-  {
-    question: "A farmer has 17 sheep and all but 9 run away. How many are left?",
-    answer: "9",
-    category: "Logic",
-    trait: "Conscientiousness"
-  },
-  {
-    question: "If you have me, you want to share me. If you share me, you haven’t got me. What am I?",
-    answer: "A secret",
-    category: "Social",
-    trait: "Extraversion"
-  },
-  {
-    question: "A homeless man is given $100. He spends $90 on food and donates $10 to another person in need. What did he just demonstrate?",
-    answer: "Empathy",
-    category: "Empathy",
-    trait: "Agreeableness"
-  },
-  {
-    question: "You’re in a dark room with a candle, a wood stove, and a gas lamp. You only have one match. What do you light first?",
-    answer: "The match",
-    category: "Stress-Relief",
-    trait: "Neuroticism"
+
+  [type]
+)
+ 
+
+useEffect(()=>{
+
+
+// console.log(AllRiddles,"AllRiddles")
+
+if(AllRiddles.length!==0) setStep(false) 
+
+
+
+}, [AllRiddles])
+
+
+useEffect(
+  ()=>{
+    setcurrentRiddle(AllRiddles[riddleCount])
   }
-];
+  ,
+  
+  [riddleCount,AllRiddles]
+)
 
-export default function RiddleQuiz() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [userAnswer, setUserAnswer] = useState('');
-  const [showResult, setShowResult] = useState(false);
 
-  const currentRiddle = riddlesData[currentIndex];
+useEffect(
+  ()=>{
+   if(attempts==3){
+    setShowAnswer(true)
+   }
+  }
+  ,
+  
+  [attempts]
+)
 
-  const checkAnswer = () => {
-    setShowResult(true);
+
+
+
+
+  const handleTypeSelect = (selectedType) => {
+    setType(selectedType);
+
   };
 
-  const nextRiddle = () => {
-    setCurrentIndex((prev) => (prev + 1) % riddlesData.length);
-    setUserAnswer('');
-    setShowResult(false);
+  const handleGuess = () => {
+    console.log(usertoken,currentRiddle);
+    
+    if(!currentRiddle ||!usertoken ) return
+
+    else if(!guess){ 
+
+      notify("please fill the Answer",0)
+
+    }
+
+    else{
+
+       axios
+          .post(
+            `${import.meta.env.VITE_API_BASE_URL}${import.meta.env.VITE_RIDDLES_URL}answerVerify/${currentRiddle?._id}/${guess}`,
+            
+            {
+              headers: {
+                Authorization: usertoken,
+              },
+            }
+          )
+          .then((success) => {
+            notify(success.data.msg, success.data.status);
+    
+            if (success.data.status === 1) {
+             setGuess("")
+           
+
+
+              setShowAnswer(true)
+            
+            }
+
+            else{
+
+              setAttempts(attempts+1)
+
+             
+
+            }
+          })
+          .catch((error) => {
+            notify(error.message, 0);
+          });
+        
+        }
+   
   };
 
-  const isCorrect = () => {
-    return userAnswer.trim().toLowerCase() === currentRiddle.answer.toLowerCase();
-  };
 
+  console.log(riddleCount,AllRiddles,AllRiddles?.length-1);
+  
   return (
-    <div className="max-w-xl mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h1 className="text-2xl font-bold mb-4 text-center">Riddle Quiz</h1>
+    <div className="min-h-screen bg-[#0C0C0C] p-6 w-full  text-white  font-sans 
+   ">
 
-      <div className="mb-4">
-        <p className="text-lg font-semibold">Category: <span className="italic">{currentRiddle.category}</span></p>
-        <p className="text-lg font-semibold">Trait: <span className="italic">{currentRiddle.trait}</span></p>
-      </div>
+      {step && (
+        <div className="bg-[#1A1A1A] w-full fixed top-0 left-0 p-8 rounded-2xl border border-[#333333] shadow-lg text-center">
+          <h2 className="text-2xl font-bold mb-6 text-[#FFD700]">Choose Riddle Type</h2>
+          <div className="flex flex-col gap-4">
+            {["easy", "hard", "very hard"].map((t) => (
+              <button
+                key={t}
+                onClick={() => handleTypeSelect(t)}
+                className="bg-[#FFD700] text-black py-2 px-4 rounded hover:brightness-110 transition"
+              >
+                {t.charAt(0).toUpperCase() + t.slice(1)}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
-      <div className="mb-4">
-        <p className="text-xl">{currentRiddle.question}</p>
-      </div>
+      {!step  && currentRiddle && (
+        <div className="bg-[#1A1A1A] p-8 rounded-2xl border border-[#333333] shadow-lg  w-full">
 
-      {!showResult ? (
-        <>
-          <input
-            type="text"
-            value={userAnswer}
-            onChange={(e) => setUserAnswer(e.target.value)}
-            placeholder="Type your answer here"
-            className="w-full border border-gray-300 rounded px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            onClick={checkAnswer}
-            disabled={!userAnswer.trim()}
-            className={`w-full py-2 rounded text-white font-semibold ${userAnswer.trim() ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'}`}
-          >
-            Submit Answer
-          </button>
-        </>
-      ) : (
-        <div className="text-center">
-          {isCorrect() ? (
-            <p className="text-green-600 font-bold text-lg mb-2">Correct! 🎉</p>
+           <p className="mt-2 text-sm text-[#888] text-center">Attempts: {attempts} / 3</p>
+          <h2 className="text-xl font-bold mb-4 text-[#FFD700]">Riddle</h2>
+        
+          <p className="mb-4 font-semibold text-center text-4xl">{ currentRiddle.question}</p>
+          
+
+        
+
+          {!showAnswer ? (
+            <>
+
+              <input
+                type="text"
+                value={guess}
+                onChange={(e) => setGuess(e.target.value)}
+                placeholder="Enter your guess"
+                className="w-full px-4 py-2 rounded bg-[#0C0C0C] border border-[#333333] text-[#F5DEB3] placeholder:text-[#888]"
+              />
+
+              <button
+                onClick={handleGuess}
+                className="w-full mt-4 bg-[#FFD700] text-black py-2 rounded hover:brightness-110 transition"
+              >
+                Submit
+              </button>
+
+              {
+                !ShowClue ?(
+<button className=" flex justify-center gap-2 items-center mt-9" onClick={()=>setShowClue(true)}> <HiLightBulb className="text-4xl text-gray-300c"/> 
+
+<span className="font-semibold text-3xl">Show Me Clue</span>  
+
+</button>
+
+                ):
+                (
+ <p className="mb-4 text-2xl font-semibold   mt-9">Clue: {currentRiddle.clue}</p>
+                )
+              }
+             
+
+
+               
+            </>
           ) : (
             <>
-              <p className="text-red-600 font-bold text-lg mb-2">Oops, that's not correct.</p>
-              <p className="text-gray-700 mb-4"><strong>Answer:</strong> {currentRiddle.answer}</p>
+              <div className="text-center">
+                <p className="text-lg font-bold">Answer:</p>
+
+
+                <p className="text-xl font-semibold text-[#0ff70f]">{currentRiddle?.answer}</p>
+               
+               
+               {
+              riddleCount<AllRiddles?.length-1?(   
+               
+               <button
+                  onClick={() => {
+                  
+                    setAttempts(0);
+
+                    setShowAnswer(false);
+
+                    setGuess("");
+
+                  
+
+                    if(riddleCount<AllRiddles?.length-1){
+
+ setRiddleCount(riddleCount + 1)
+
+                    }
+                
+                
+                  }}
+                  className="mt-4 bg-[#FFD700] text-black py-2 px-4 rounded hover:brightness-110 transition"
+                >
+               Next
+                </button>):(
+  <button
+                  onClick={() => {
+                  
+          setType("")
+          setStep(true)
+            setAttempts(0);
+            setShowAnswer(false);
+            setGuess("");
+                
+                
+                  }}
+                  className="mt-4 bg-[#FFD700] text-black py-2 px-4 rounded hover:brightness-110 transition"
+                >
+               Play Again
+                </button>
+                )
+               } 
+               
+            
+
+
+              </div>
             </>
           )}
-          <button
-            onClick={nextRiddle}
-            className="py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold"
-          >
-            Next Riddle
-          </button>
         </div>
       )}
     </div>
