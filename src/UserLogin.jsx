@@ -40,6 +40,8 @@ export default function UserLogin() {
    
   ];
 
+  
+
 
   const handleSendOtp = () => {
 
@@ -54,6 +56,7 @@ export default function UserLogin() {
   };
 
   const handleVerifyOtp = () => {
+
     axios.post(`${import.meta.env.VITE_API_BASE_URL}${import.meta.env.VITE_USER_URL}loginWithOtp`, { phone:phone.replace("+", ""), otp })
       .then((res) => {
         notify(res.data.msg, res.data.status);

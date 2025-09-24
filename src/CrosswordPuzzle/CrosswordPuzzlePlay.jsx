@@ -13,7 +13,6 @@ export default function CrosswordPuzzlePlay() {
     userGrid,
     setUserGrid,
     CrosswordPuzzleScore_id,
-    
   } = useContext(Context);
 
   const { id } = useParams();
@@ -58,13 +57,8 @@ export default function CrosswordPuzzlePlay() {
 
   const focusCell = (row, col) => {
     const ref = inputRefs.current?.[row]?.[col];
-    if (ref) {
-      if (typeof ref === 'object' && 'current' in ref && ref.current) {
-        ref.current.focus();
-      } else if (ref instanceof HTMLElement) {
-        // fallback if ref is DOM element directly
-        ref.focus();
-      }
+    if (ref && ref.current) {
+      ref.current.focus();
     }
   };
 
@@ -87,19 +81,23 @@ export default function CrosswordPuzzlePlay() {
             if (nextCol === 0) {
               nextRow = nextRow < maxRow ? nextRow + 1 : 0;
             }
-          } while (!CrosswordPuzzle.layout[nextRow][nextCol]);
+          } while (nextRow <= maxRow && !CrosswordPuzzle.layout[nextRow][nextCol]);
         } else if (direction === 'down') {
           do {
             nextRow = nextRow < maxRow ? nextRow + 1 : 0;
-          } while (!CrosswordPuzzle.layout[nextRow][nextCol]);
+          } while (nextRow <= maxRow && !CrosswordPuzzle.layout[nextRow][nextCol]);
         }
 
-        focusCell(nextRow, nextCol);
+        if (nextRow <= maxRow) {
+          focusCell(nextRow, nextCol);
+        }
       }
     }
   };
 
   const handleKeyDown = (e, row, col) => {
+    if (!CrosswordPuzzle?.layout) return;
+    
     const maxRow = CrosswordPuzzle.layout.length - 1;
     const maxCol = CrosswordPuzzle.layout[0].length - 1;
 
@@ -110,7 +108,7 @@ export default function CrosswordPuzzlePlay() {
       case 'ArrowUp':
         do {
           newRow = newRow > 0 ? newRow - 1 : maxRow;
-        } while (!CrosswordPuzzle.layout[newRow][newCol]);
+        } while (newRow >= 0 && !CrosswordPuzzle.layout[newRow][newCol]);
         e.preventDefault();
         focusCell(newRow, newCol);
         break;
@@ -118,7 +116,7 @@ export default function CrosswordPuzzlePlay() {
       case 'ArrowDown':
         do {
           newRow = newRow < maxRow ? newRow + 1 : 0;
-        } while (!CrosswordPuzzle.layout[newRow][newCol]);
+        } while (newRow <= maxRow && !CrosswordPuzzle.layout[newRow][newCol]);
         e.preventDefault();
         focusCell(newRow, newCol);
         break;
@@ -126,7 +124,7 @@ export default function CrosswordPuzzlePlay() {
       case 'ArrowLeft':
         do {
           newCol = newCol > 0 ? newCol - 1 : maxCol;
-        } while (!CrosswordPuzzle.layout[newRow][newCol]);
+        } while (newCol >= 0 && !CrosswordPuzzle.layout[newRow][newCol]);
         e.preventDefault();
         focusCell(newRow, newCol);
         break;
@@ -134,7 +132,7 @@ export default function CrosswordPuzzlePlay() {
       case 'ArrowRight':
         do {
           newCol = newCol < maxCol ? newCol + 1 : 0;
-        } while (!CrosswordPuzzle.layout[newRow][newCol]);
+        } while (newCol <= maxCol && !CrosswordPuzzle.layout[newRow][newCol]);
         e.preventDefault();
         focusCell(newRow, newCol);
         break;
@@ -147,7 +145,7 @@ export default function CrosswordPuzzlePlay() {
           if (newCol === 0) {
             newRow = newRow < maxRow ? newRow + 1 : 0;
           }
-        } while (!CrosswordPuzzle.layout[newRow][newCol]);
+        } while (newRow <= maxRow && newCol <= maxCol && !CrosswordPuzzle.layout[newRow][newCol]);
         focusCell(newRow, newCol);
         break;
 
@@ -157,6 +155,8 @@ export default function CrosswordPuzzlePlay() {
   };
 
   const checkAnswers = () => {
+    if (!CrosswordPuzzle || !userGrid) return;
+    
     let total = 0;
 
     const checkClue = (clue, direction) => {
@@ -166,7 +166,14 @@ export default function CrosswordPuzzlePlay() {
       for (let i = 0; i < answer.length; i++) {
         const r = direction === 'across' ? row : row + i;
         const c = direction === 'across' ? col + i : col;
-        const userChar = userGrid?.[r]?.[c] || '';
+        
+        // Check if coordinates are valid
+        if (r >= userGrid.length || c >= userGrid[0].length) {
+          isCorrect = false;
+          break;
+        }
+        
+        const userChar = userGrid[r][c] || '';
 
         if (userChar.toUpperCase() !== answer[i].toUpperCase()) {
           isCorrect = false;
@@ -222,6 +229,8 @@ export default function CrosswordPuzzlePlay() {
   };
 
   const getCellColor = (row, col) => {
+    if (!CrosswordPuzzle || !userGrid) return 'bg-white';
+    
     if (selectedClue) {
       const { row: clueRow, col: clueCol, direction, number } = selectedClue;
       const clueList = direction === 'across' ? CrosswordPuzzle.clues.across : CrosswordPuzzle.clues.down;
@@ -248,7 +257,12 @@ export default function CrosswordPuzzlePlay() {
         const c = clueCol + (direction === 'across' ? i : 0);
 
         if (r === row && c === col) {
-          const userChar = userGrid?.[r]?.[c] || '';
+          // Check if coordinates are valid
+          if (r >= userGrid.length || c >= userGrid[0].length) {
+            return 'bg-white';
+          }
+          
+          const userChar = userGrid[r][c] || '';
           const correctChar = answer[i].toUpperCase();
           return userChar.toUpperCase() === correctChar ? 'bg-green-200' : 'bg-red-200';
         }
@@ -258,7 +272,6 @@ export default function CrosswordPuzzlePlay() {
   };
 
   const restartPuzzleHandler = () => {
-
     if (!CrosswordPuzzleScore_id || !usertoken || !id || !user) return;
 
     axios
@@ -273,7 +286,7 @@ export default function CrosswordPuzzlePlay() {
         }
       )
       .then((success) => {
-        notify("puzzle Restarted", success.data.status);
+        notify("Puzzle Restarted", success.data.status);
         if (success.data.status === 1) {
           CrosswordPuzzleFetch(id, user._id);
           setUserGrid([]);
@@ -288,55 +301,54 @@ export default function CrosswordPuzzlePlay() {
   if (!CrosswordPuzzle) return <div>Loading...</div>;
 
   return (
-<div className="flex flex-col gap-6 py-10 px-4 bg-black text-[#D4AF37] min-h-screen font-sans">
+    <div className="flex flex-col gap-6 py-10 px-4 bg-black text-[#D4AF37] min-h-screen font-sans">
+      <h2 className='mx-auto text-lg uppercase font-bold '>{CrosswordPuzzle?.title}</h2>
 
-<h2 className='mx-auto text-lg uppercase font-bold '>{CrosswordPuzzle?.title}</h2>
+      <div className="flex flex-wrap gap-6 md:gap-14 justify-center">
+        {CrosswordPuzzle.clues.across && CrosswordPuzzle.clues.down && (
+          <>
+            <div className="w-full md:w-2/5">
+              <h2 className="text-2xl font-bold mb-4 border-b border-[#D4AF37] pb-2">Across</h2>
+              <div className="max-h-[160px] p-3 border border-[#D4AF37] bg-[#0a0a0a] shadow-inner shadow-[#D4AF37]/30 overflow-y-auto rounded-md">
+                {CrosswordPuzzle.clues.across.map((clue) => (
+                  <p
+                    key={'across' + clue.number}
+                    onClick={() => focusClue(clue)}
+                    className={`cursor-pointer mb-2 px-2 py-1 rounded-md transition-all duration-200 ${
+                      selectedClue?.number === clue.number && selectedClue.direction === 'across'
+                        ? 'bg-[#D4AF37] text-black font-semibold'
+                        : 'hover:bg-[#D4AF37]/20'
+                    }`}
+                  >
+                    {clue.number}. {clue.clue}
+                  </p>
+                ))}
+              </div>
+            </div>
 
-  <div className="flex flex-wrap gap-6 md:gap-14 justify-center">
-    {CrosswordPuzzle.clues.across && CrosswordPuzzle.clues.down && (
-      <>
-        <div className="w-full md:w-2/5">
-          <h2 className="text-2xl font-bold mb-4 border-b border-[#D4AF37] pb-2">Across</h2>
-          <div className="max-h-[160px] p-3 border border-[#D4AF37] bg-[#0a0a0a] shadow-inner shadow-[#D4AF37]/30 overflow-y-auto rounded-md">
-            {CrosswordPuzzle.clues.across.map((clue) => (
-              <p
-                key={'across' + clue.number}
-                onClick={() => focusClue(clue)}
-                className={`cursor-pointer mb-2 px-2 py-1 rounded-md transition-all duration-200 ${
-                  selectedClue?.number === clue.number && selectedClue.direction === 'across'
-                    ? 'bg-[#D4AF37] text-black font-semibold'
-                    : 'hover:bg-[#D4AF37]/20'
-                }`}
-              >
-                {clue.number}. {clue.clue}
-              </p>
-            ))}
-          </div>
-        </div>
+            <div className="w-full md:w-2/5">
+              <h2 className="text-2xl font-bold mb-4 border-b border-[#D4AF37] pb-2">Down</h2>
+              <div className="max-h-[160px] p-3 border border-[#D4AF37] bg-[#0a0a0a] shadow-inner shadow-[#D4AF37]/30 overflow-y-auto rounded-md">
+                {CrosswordPuzzle.clues.down.map((clue) => (
+                  <p
+                    key={'down' + clue.number}
+                    onClick={() => focusClue(clue)}
+                    className={`cursor-pointer mb-2 px-2 py-1 rounded-md transition-all duration-200 ${
+                      selectedClue?.number === clue.number && selectedClue.direction === 'down'
+                        ? 'bg-[#D4AF37] text-black font-semibold'
+                        : 'hover:bg-[#D4AF37]/20'
+                    }`}
+                  >
+                    {clue.number}. {clue.clue}
+                  </p>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+      </div>
 
-        <div className="w-full md:w-2/5">
-          <h2 className="text-2xl font-bold mb-4 border-b border-[#D4AF37] pb-2">Down</h2>
-          <div className="max-h-[160px] p-3 border border-[#D4AF37] bg-[#0a0a0a] shadow-inner shadow-[#D4AF37]/30 overflow-y-auto rounded-md">
-            {CrosswordPuzzle.clues.down.map((clue) => (
-              <p
-                key={'down' + clue.number}
-                onClick={() => focusClue(clue)}
-                className={`cursor-pointer mb-2 px-2 py-1 rounded-md transition-all duration-200 ${
-                  selectedClue?.number === clue.number && selectedClue.direction === 'down'
-                    ? 'bg-[#D4AF37] text-black font-semibold'
-                    : 'hover:bg-[#D4AF37]/20'
-                }`}
-              >
-                {clue.number}. {clue.clue}
-              </p>
-            ))}
-          </div>
-        </div>
-      </>
-    )}
-  </div>
-
- <div className="overflow-auto">
+      <div className="overflow-auto">
         <table className="mx-auto border-collapse border border-gray-300">
           <tbody>
             {CrosswordPuzzle?.layout?.map((row, rowIndex) => (
@@ -344,11 +356,7 @@ export default function CrosswordPuzzlePlay() {
                 {row?.map((cellActive, colIndex) => (
                   <td
                     key={colIndex}
-<<<<<<< HEAD
-                    className={`border border-gray-400 w-10 h-10  text-center align-middle relative ${cellActive ? '' : 'bg-black'}`}
-=======
                     className={`border border-gray-400 w-10 h-10 text-center align-middle relative ${cellActive ? '' : 'bg-black'}`}
->>>>>>> 53e941019ebd24a0b9638415395f202b7712fd63
                   >
                     {cellActive ? (
                       <>
@@ -378,43 +386,31 @@ export default function CrosswordPuzzlePlay() {
           </tbody>
         </table>
       </div>
-       {score !== null && (
-    <p className="text-center font-bold mt-2 text-xl text-[#D4AF37]">
-      Your score: {score} /{' '}
-      {CrosswordPuzzle.clues.across.length + CrosswordPuzzle.clues.down.length}
-    </p>
-  )}
+      
+      {score !== null && (
+        <p className="text-center font-bold mt-2 text-xl text-[#D4AF37]">
+          Your score: {score} /{' '}
+          {CrosswordPuzzle.clues.across.length + CrosswordPuzzle.clues.down.length}
+        </p>
+      )}
 
-  <div className="flex flex-wrap justify-center gap-5 ">
-    <button
-      onClick={checkAnswers}
-      className="px-5 py-2 bg-[#D4AF37] text-black rounded hover:bg-[#c8a93d] font-semibold transition"
-    >
-      Check Answers
-    </button>
-<<<<<<< HEAD
-    {
-=======
-{
->>>>>>> 53e941019ebd24a0b9638415395f202b7712fd63
-      CrosswordPuzzleScore_id&&    <button
-      onClick={restartPuzzleHandler}
-      className="px-5 py-2 bg-[#111] border border-[#D4AF37] text-[#D4AF37] rounded hover:bg-[#222] font-semibold transition"
-    >
-      Restart Puzzle
-    </button>
-    }
-<<<<<<< HEAD
-
-=======
->>>>>>> 53e941019ebd24a0b9638415395f202b7712fd63
-  </div>
-
- 
-</div>
-
-
+      <div className="flex flex-wrap justify-center gap-5 ">
+        <button
+          onClick={checkAnswers}
+          className="px-5 py-2 bg-[#D4AF37] text-black rounded hover:bg-[#c8a93d] font-semibold transition"
+        >
+          Check Answers
+        </button>
+        
+        {CrosswordPuzzleScore_id && (
+          <button
+            onClick={restartPuzzleHandler}
+            className="px-5 py-2 bg-[#111] border border-[#D4AF37] text-[#D4AF37] rounded hover:bg-[#222] font-semibold transition"
+          >
+            Restart Puzzle
+          </button>
+        )}
+      </div>
+    </div>
   );
 }
-
-
