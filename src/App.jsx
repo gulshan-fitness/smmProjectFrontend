@@ -35,6 +35,8 @@ import TopScroll from "./TopScroll";
 import RiddlesAdd from "./Admin/Riddles/RiddlesAdd";
 import RiddlesView from "./Admin/Riddles/RiddlesView";
 import MatchstickMathPuzzle from "./MatchstickMathPuzzle/MatchstickMathPuzzle";
+import DragAndDrop from "./DragAndDrop";
+import MatchstickMathPuzzleAdd from "./Admin/MatchstickMathPuzzle/MatchstickMathPuzzleAdd";
 
 function App() {
   const { setadmin, setadminToken, setuser, setusertoken, setIsScrolled } =
@@ -187,6 +189,18 @@ function App() {
         },
 
 
+          {
+          path: "/drag",
+          element: (
+
+            <UserProtectedRouts>
+
+<DragAndDrop/>
+
+            </UserProtectedRouts> 
+        ),
+        },
+
       ],
     },
 
@@ -251,6 +265,22 @@ function App() {
           path: "riddles/edit/:id",
           element: <SudokoEdit/>,
         },
+
+
+
+              {
+          path: "matchstickpuzzle/add",
+          element: <MatchstickMathPuzzleAdd />,
+        },
+             {
+          path: "matchstickpuzzle/view",
+          element: <RiddlesView />,
+        },
+             {
+          path: "matchstickpuzzle/edit/:id",
+          element: <SudokoEdit/>,
+        },
+        
         
       ],
     },
