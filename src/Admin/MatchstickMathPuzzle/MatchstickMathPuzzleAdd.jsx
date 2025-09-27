@@ -1,20 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import React, { useContext, useEffect, useState } from 'react';
+import { Context } from '../../Context_holder';
 
 export default function MatchstickMathPuzzleAdd() {
-  // Matchstick patterns for digits 0-9
+  const {adminToken,notify }=useContext(Context)
 
     const [game, setGame] = useState("");
 
   const [result, setResult] = useState("");
 
+  const [hint, sethint] = useState("");
+
+
     const [gameBackenddata, setgameBackenddata] = useState([]);
 
-  const [resultBackenddat, setResultBackenddat] = useState([]);
+  const [ResultBackenddata, setResultBackenddata] = useState([]);
 
     
 
-  const [level, setLevel] = useState(1);
-  const [moves, setMoves] = useState(3);
+  const [level, setLevel] = useState(0);
+  const [moves, setMoves] = useState(0);
 
 
   const Patterns = {
@@ -131,21 +136,33 @@ useEffect(
 )
 
 
-console.log(gameBackenddata,"gameBackenddata");
 
-const gameBackendHandler=()=>{
-    if(game?.length!=0){
+
+
+
+
+
+
+const SaveHandler=()=>{
+    if(game && result ){
     
     const  gameArr= game?.split("")
+    const  resultArr= result?.split("")
+
+    setgameBackenddata([])
+    setResultBackenddata([])
 
 
 
     gameArr?.map(
         (data,index)=> {
+
+         
+
         if( ["0","1","2","3","4","5","6","7","8","9"].includes(data) ){
 
             const numobj={
-                  id: "num",
+                  id: gameArr?.length-1==index?"result":"number",
       value: data,
       matchsticks: [...Patterns[data]]
     
@@ -163,30 +180,6 @@ return newarr
             
 
         }
-
-          if( ["0","1","2","3","4","5","6","7","8","9"].includes(data)&&gameArr?.length==index ){
-
-            const numobj={
-                  id: "equals",
-      value: data,
-      matchsticks: [...Patterns[data]]
-    
-            }
-setgameBackenddata(
-    predata=>{
-
-       const newarr=[...predata] 
-    newarr.push(numobj)
-return newarr
-    }
-)
-
-           
-            
-
-        }
-
-
 
           if( ["-","+",].includes(data) ){
 
@@ -238,8 +231,127 @@ return newarr
         
         }
     )
+
+      resultArr?.map(
+        (data,index)=> {
+
+         
+
+        if( ["0","1","2","3","4","5","6","7","8","9"].includes(data) ){
+
+            const numobj={
+                  id: gameArr?.length-1==index?"result":"number",
+      value: data,
+      matchsticks: [...Patterns[data]]
     
+            }
+setResultBackenddata(
+    predata=>{
+
+       const newarr=[...predata] 
+    newarr.push(numobj)
+return newarr
+    }
+)
+
+           
+            
+
+        }
+
+          if( ["-","+",].includes(data) ){
+
+            const numobj={
+                  id: "operator",
+      value: data,
+      matchsticks: [...Patterns[data]]
+    
+            }
+setResultBackenddata(
+    predata=>{
+
+       const newarr=[...predata] 
+    newarr.push(numobj)
+return newarr
+    }
+)
+
+            
+            
+
+        }
+
+            if( ["="].includes(data) ){
+
+            const numobj={
+      id: "equals",
+      value: data,
+      matchsticks: [...Patterns[data]]
+    
+            }
+setResultBackenddata(
+    predata=>{
+       const newarr=[...predata] 
+       newarr.push(numobj)
+return newarr
+    }
+)
+
+            
+            
+
+        }
+
+        
+
+
+        
+        
+        }
+    )
+    
+
+    
+        if(gameBackenddata?.length!=0&&adminToken && 
+          ResultBackenddata?.length!=0 && level && moves &&hint){
+
+  const data={
+  game:gameBackenddata,
+  level: level ,
+  move:moves ,
+  hint: hint,
+  result: ResultBackenddata,
+            }
+
+
+        axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}${import.meta.env.VITE_MATCHSTICKPUZZLE_URL}add`,
+        data,
+        {
+          headers: {
+            Authorization: adminToken,
+          },
+        }
+
+      )
+      .then((success) => {
+        notify(success.data.msg, success.data.status);
+
+        if (success.data.status === 1) {
+          setGame(" ")
+        }
+      })
+      .catch((error) => {
+        notify(error.message, 0);
+      });
+
+
+
+        }
 }
+
+
+
 
 
 }
@@ -255,7 +367,7 @@ return newarr
 //   ];
 
 
-  const [jsonOutput, setJsonOutput] = useState('');
+  
 
   console.log(game);
   
@@ -463,27 +575,65 @@ return newarr
 
     <p>Puzzle</p>
 
-    <label htmlFor="">as like num,operater,equel,result</label>
+    <label htmlFor="">use numbers only 0 to 9</label>
 
     <input type="text"   className='block px-2'
-     onChange={(e)=>setGame(e.target.value)} 
+     onChange={(e)=>{setGame(e.target.value)
+
+      setgameBackenddata([])
+     }} 
      />
 
 
 </div>
 
-<div>
-    
+
+<div className=' border-2 p-2  '>
+
+    <p>Result</p>
+
+    <label htmlFor="">use numbers only 0 to 9</label>
+
+    <input type="text" className='block px-2'
+     onChange={(e)=>{setResult(e.target.value)
+
+      setResultBackenddata([])
+     }} 
+     />
+
+
+</div>
+
+
+<div className=' border-2 p-2  '>
+
+    <p>Hint</p>
+
+    <label htmlFor="">use numbers only 0 to 9</label>
+
+    <input type="text" className='block px-2'
+     onChange={(e)=>{sethint(e.target.value)
+
+     
+     }} 
+     />
+
+
 </div>
 
 
 <div>
     
 </div>
+
+
+<div>
+    
+</div>
 </div>
 
 
-<button className='px-3 py-1 border-2' onClick={()=>gameBackendHandler()}>
+<button className='px-3 py-1 border-2' onClick={()=>SaveHandler() }>
     save
 </button>
 

@@ -38,6 +38,11 @@ export default function Context_holder(props) {
     const [AllRiddles, setAllRiddles] = useState([]);
   const [Riddles, setRiddles] = useState(null);
 
+const [AllMatchistickPuzzles, setAllMatchistickPuzzles] = useState([]);
+
+const [MatchistickPuzzles, setMatchistickPuzzles] = useState(null);
+
+
   const notify = (msg, status) => {
     toast(msg, {
       position: "top-right",
@@ -173,6 +178,49 @@ export default function Context_holder(props) {
 
       .catch((error) => {});
   };
+
+
+      const MatchistickPuzzleFetch = (id, query) => {
+   
+
+    let api =`${import.meta.env.VITE_API_BASE_URL}${
+      import.meta.env.VITE_MATCHSTICKPUZZLE_URL
+    }read`;
+
+    if (id) {
+      api += `/${id}`;
+    }
+
+     if(query){
+
+          api += `${query}`;
+
+    }
+
+
+    axios.get(api)
+
+      .then((success) => {
+        if (success.data.status == 1) {
+
+          const data=success.data.MatchstickMathPuzzle;
+
+
+          if (id) {
+            setMatchistickPuzzles(data);
+          }
+
+      
+          else {
+
+            setAllMatchistickPuzzles(data);
+
+          }
+        }
+      })
+
+      .catch((error) => {});
+  };
   
 
  const menu_links = [
@@ -265,7 +313,7 @@ export default function Context_holder(props) {
         setSudoko,
         AllSudoko,
         setAllSudoko,
-        SudokoFetch,AllRiddles, setAllRiddles,Riddles, setRiddles,RiddlesFetch
+        SudokoFetch,AllRiddles, setAllRiddles,Riddles, setRiddles,RiddlesFetch,MatchistickPuzzleFetch,AllMatchistickPuzzles,setAllMatchistickPuzzles,  MatchistickPuzzles,setMatchistickPuzzles
       }}
     >
       {props.children}

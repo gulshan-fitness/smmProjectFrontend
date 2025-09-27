@@ -34,9 +34,10 @@ import TopScroll from "./TopScroll";
 
 import RiddlesAdd from "./Admin/Riddles/RiddlesAdd";
 import RiddlesView from "./Admin/Riddles/RiddlesView";
-import MatchstickMathPuzzle from "./MatchstickMathPuzzle/MatchstickMathPuzzle";
+import MatchstickMathPuzzle from "./MatchstickMathPuzzle/MatchstickMathPuzzlePlay";
 import DragAndDrop from "./DragAndDrop";
 import MatchstickMathPuzzleAdd from "./Admin/MatchstickMathPuzzle/MatchstickMathPuzzleAdd";
+import MatchstickMathPuzzlePlay from "./MatchstickMathPuzzle/MatchstickMathPuzzlePlay";
 
 function App() {
   const { setadmin, setadminToken, setuser, setusertoken, setIsScrolled } =
@@ -177,12 +178,12 @@ function App() {
         },
 
          {
-          path: "/matchstickpuzzle",
+          path: "/matchstickpuzzle/:id",
           element: (
 
             <UserProtectedRouts>
 
-<MatchstickMathPuzzle/>
+<MatchstickMathPuzzlePlay/>
 
             </UserProtectedRouts> 
         ),
