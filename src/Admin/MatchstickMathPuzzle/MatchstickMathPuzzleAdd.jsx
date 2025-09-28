@@ -303,10 +303,7 @@ return newarr
         }
 
         
-
-
-        
-        
+ 
         }
     )
     
@@ -338,7 +335,13 @@ return newarr
         notify(success.data.msg, success.data.status);
 
         if (success.data.status === 1) {
-          setGame(" ")
+
+          setGame("")
+          setResult("")
+          sethint("")
+          setLevel(0)
+          setMoves(0)
+          
         }
       })
       .catch((error) => {
