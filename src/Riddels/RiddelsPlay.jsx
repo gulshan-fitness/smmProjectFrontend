@@ -13,8 +13,8 @@ import { HiLightBulb } from "react-icons/hi";
 export default function RiddlesPlay() {
 
 
-  const { usertoken, notify,AllRiddles,Riddles,RiddlesFetch
-      } = useContext(Context);
+  const { usertoken, notify,AllRiddles,Riddles,RiddlesFetch,
+     user } = useContext(Context);
 
   const [step, setStep] = useState(true); // 'chooseType' or 'play'
   const [type, setType] = useState("");
@@ -24,12 +24,48 @@ export default function RiddlesPlay() {
   const [riddleCount, setRiddleCount] = useState(0);
 
   const [guess, setGuess] = useState("");
+
   const [attempts, setAttempts] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
+
+  console.log(attempts,"attempts");
+  
+
   
 const [searchParams, setSearchParams] = useSearchParams();
 
+const riddelScoreSubmit=(ans)=>{
+  if(!user ||!currentRiddle) return
+const score={
+   user_id:user?._id,
+  
+    
+    Riddle_id:currentRiddle?._id,
+  
+  
+    score: ans,
+  
+}
 
+
+    axios
+        .post(
+          `${import.meta.env.VITE_API_BASE_URL}${import.meta.env.VITE_RIDDLESCORE_URL="riddlescore/"
+}add`,
+          score,
+          {
+            headers: {
+              Authorization: usertoken,
+            },
+          }
+        )
+        .then(success => {
+          notify(success.data.msg, success.data.status);
+  
+        
+        })
+        .catch(error => {});
+}
 
 
  
@@ -81,6 +117,8 @@ useEffect(
   ()=>{
    if(attempts==3){
     setShowAnswer(true)
+    riddelScoreSubmit(0)
+   
    }
   }
   ,
@@ -124,17 +162,19 @@ useEffect(
             notify(success.data.msg, success.data.status);
     
             if (success.data.status === 1) {
+
              setGuess("")
-           
-
-
               setShowAnswer(true)
-            
+              
+             riddelScoreSubmit(1)
             }
 
             else{
 
               setAttempts(attempts+1)
+
+
+               
 
              
 

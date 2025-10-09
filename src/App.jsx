@@ -38,6 +38,8 @@ import MatchstickMathPuzzle from "./MatchstickMathPuzzle/MatchstickMathPuzzlePla
 import DragAndDrop from "./DragAndDrop";
 import MatchstickMathPuzzleAdd from "./Admin/MatchstickMathPuzzle/MatchstickMathPuzzleAdd";
 import MatchstickMathPuzzlePlay from "./MatchstickMathPuzzle/MatchstickMathPuzzlePlay";
+import UserLive from "./UserLive";
+import MatchisickPuzzleList from "./MatchstickMathPuzzle/MatchisickPuzzleList";
 
 function App() {
   const { setadmin, setadminToken, setuser, setusertoken, setIsScrolled } =
@@ -112,6 +114,11 @@ function App() {
           element: <Admin_login />,
         },
 
+
+           {
+          path: "/userscount",
+          element: <UserLive />,
+        },
         {
           path: "/adminsignupitslocked",
 
@@ -186,6 +193,17 @@ function App() {
 <MatchstickMathPuzzlePlay/>
 
             </UserProtectedRouts> 
+        ),
+        },
+
+          {
+          path: "/matchstickpuzzleLevels",
+          element: (
+          <UserProtectedRouts>
+
+<MatchisickPuzzleList/>
+
+      </UserProtectedRouts> 
         ),
         },
 
@@ -285,6 +303,9 @@ function App() {
         
       ],
     },
+
+
+    
   ]);
   <>
   

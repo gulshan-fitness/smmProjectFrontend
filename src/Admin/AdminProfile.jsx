@@ -13,7 +13,7 @@ import Admin_Headbaar from './Admin_Headbaar';
 
 
 
-export default function AdminProfile() {
+export default function   AdminProfile() {
 
   return (
 
