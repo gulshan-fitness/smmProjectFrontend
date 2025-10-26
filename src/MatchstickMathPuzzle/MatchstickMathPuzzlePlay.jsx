@@ -211,7 +211,6 @@ const useDragDrop = (matchsticks, setEquation, index, VerifyHandler, ShowMoves, 
 
   return { handleDragStart, handleDrop };
 };
-
 // Num Component (Seven-Segment Display)
 const Num = ({ matchsticks, setEquation, numIndex, VerifyHandler, ShowMoves, UseMoves }) => {
   const { handleDragStart, handleDrop } = useDragDrop(matchsticks, setEquation, numIndex, VerifyHandler, ShowMoves, UseMoves);
@@ -250,35 +249,42 @@ const Num = ({ matchsticks, setEquation, numIndex, VerifyHandler, ShowMoves, Use
   );
 };
 
-// Operator Component
+// Operator Component (+)
+// Operator Component (+) adjusted
 const Operator = ({ matchsticks, setEquation, operatorIndex, VerifyHandler, ShowMoves, UseMoves }) => {
   const { handleDragStart, handleDrop } = useDragDrop(matchsticks, setEquation, operatorIndex, VerifyHandler, ShowMoves, UseMoves);
 
   return (
-    <div className="relative h-[80px] w-[24px] sm:h-[100px] sm:w-[30px] md:h-[120px] md:w-[36px] lg:h-[140px] lg:w-[42px] xl:h-[160px] xl:w-[48px] mx-1 sm:mx-2 flex items-center justify-center">
-      {/* Horizontal Bar (a) */}
-      <div className="absolute top-1/2 left-0 w-full h-[6px] sm:h-[8px] md:h-[10px] lg:h-[12px] -translate-y-1/2">
+    <div className="relative h-[80px] w-[40px] sm:h-[100px] sm:w-[50px] md:h-[120px] md:w-[60px] lg:h-[140px] lg:w-[70px] xl:h-[160px] xl:w-[80px] mx-1 sm:mx-2 flex items-center justify-center">
+      {/* Horizontal Bar */}
+      <div className="absolute top-1/2 left-0 w-full h-[6px] sm:h-[8px] md:h-[10px] lg:h-[12px] -translate-y-1/2 z-50">
         <MatchStickHorizontal match={matchsticks[0]} onDragStart={handleDragStart(0)} onDrop={handleDrop(0)} />
       </div>
-      {/* Vertical Bar for '+' (b) */}
-      <div className="absolute top-[25%] left-1/2 h-[40px] sm:h-[50px] md:h-[60px] lg:h-[70px] xl:h-[80px] w-[6px] sm:w-[8px] md:w-[10px] lg:w-[12px] -translate-x-1/2">
-        <MatchStick match={matchsticks[1]} onDragStart={handleDragStart(1)} onDrop={handleDrop(1)} />
+
+      {/* Vertical Bar */}
+    <div className="absolute left-1/2 top-1/2 h-[62%] w-[6px] sm:w-[8px] md:w-[10px] lg:w-[12px] -translate-x-1/2 -translate-y-1/2">
+        <MatchStick
+          match={matchsticks[1]}
+          onDragStart={handleDragStart(1)}
+          onDrop={handleDrop(1)}
+        />
       </div>
     </div>
   );
 };
 
-// Equals Component
+
+// Equals Component (=)
 const Equals = ({ matchsticks, setEquation, equalsIndex, VerifyHandler, ShowMoves, UseMoves }) => {
   const { handleDragStart, handleDrop } = useDragDrop(matchsticks, setEquation, equalsIndex, VerifyHandler, ShowMoves, UseMoves);
 
   return (
-    <div className="relative h-[80px] w-[24px] sm:h-[100px] sm:w-[30px] md:h-[120px] md:w-[36px] lg:h-[140px] lg:w-[42px] xl:h-[160px] xl:w-[48px] mx-1 sm:mx-2 flex flex-col items-center justify-center gap-[8px] sm:gap-[10px] md:gap-[12px] lg:gap-[14px]">
-      {/* Top Horizontal Bar (a) */}
+    <div className="relative h-[80px] w-[40px] sm:h-[100px] sm:w-[50px] md:h-[120px] md:w-[60px] lg:h-[140px] lg:w-[70px] xl:h-[160px] xl:w-[80px] mx-1 sm:mx-2 flex flex-col items-center justify-center gap-[8px] sm:gap-[10px] md:gap-[12px] lg:gap-[14px]">
+      {/* Top Horizontal */}
       <div className="w-full h-[6px] sm:h-[8px] md:h-[10px] lg:h-[12px]">
         <MatchStickHorizontal match={matchsticks[0]} onDragStart={handleDragStart(0)} onDrop={handleDrop(0)} />
       </div>
-      {/* Bottom Horizontal Bar (b) */}
+      {/* Bottom Horizontal */}
       <div className="w-full h-[6px] sm:h-[8px] md:h-[10px] lg:h-[12px]">
         <MatchStickHorizontal match={matchsticks[1]} onDragStart={handleDragStart(1)} onDrop={handleDrop(1)} />
       </div>
@@ -286,7 +292,7 @@ const Equals = ({ matchsticks, setEquation, equalsIndex, VerifyHandler, ShowMove
   );
 };
 
-// EquationComponent (unchanged)
+// EquationComponent
 const EquationComponent = ({ item, index, setEquation, VerifyHandler, ShowMoves, UseMoves }) => {
   switch (item.id) {
     case "number":
@@ -301,6 +307,7 @@ const EquationComponent = ({ item, index, setEquation, VerifyHandler, ShowMoves,
       return null;
   }
 };
+
 
 // Main Component
 export default function MatchstickMathPuzzlePlay() {
@@ -318,7 +325,11 @@ export default function MatchstickMathPuzzlePlay() {
 
   const { id } = useParams();
 
-const  Nextindex = AllMatchistickPuzzles[AllMatchistickPuzzles?.findIndex(d=>d?._id ==id)+1]?._id
+const  Nextindex = AllMatchistickPuzzles?.findIndex(d=>d?._id ==id)+1
+
+const Nextindex_id= AllMatchistickPuzzles[AllMatchistickPuzzles?.findIndex(d=>d?._id ==id)+1]?._id
+
+console.log(Nextindex,"Nextindex",showMoves,AllMatchistickPuzzles?.length);
 
   
 
@@ -403,17 +414,21 @@ const score={
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-red-900 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-red-900 flex flex-col items-center  p-4 sm:p-6 md:p-8">
       {/* Header */}
+
       <div className="w-full max-w-4xl flex justify-between items-center text-white text-sm sm:text-base md:text-lg font-semibold mb-4">
+
         <p>Level {MatchistickPuzzles?.level}</p>
         <p>Moves: {showMoves}/{MatchistickPuzzles?.move}</p>
         <p>Puzzle {MatchistickPuzzles?.level}</p>
+
       </div>
 
       {/* Instructions */}
       <div className="w-full max-w-4xl text-center text-white text-sm sm:text-base mb-4">
         <p>Drag and drop matchsticks to correct the equation. You have {MatchistickPuzzles?.move} moves.</p>
+        
       </div>
 
       {/* Equation Display */}
@@ -438,6 +453,12 @@ const score={
         )}
       </div>
 
+
+      <div className=" flex justify-center items-center">
+
+        
+      </div>
+
       {/* Congrats Popup */}
       <div
         className={`${
@@ -456,19 +477,28 @@ const score={
           </Link>
 
 
-          <Link to={`/matchstickpuzzle/${Nextindex}`}
-            onClick={() => setCongrats(false)}
+
+{
+Nextindex<AllMatchistickPuzzles?.length
+&&
+(
+
+   <Link to={`/matchstickpuzzle/${Nextindex_id}`}
+            onClick={() => {setCongrats(false)
+              setShowMoves(0)
+            }}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             Next
           </Link>
+)
 
-
-
-          
-
-
+}
          
+
+
+
+
         </div>
       </div>
 

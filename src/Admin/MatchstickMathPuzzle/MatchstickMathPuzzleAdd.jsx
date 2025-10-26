@@ -3,325 +3,185 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Context } from '../../Context_holder';
 
 export default function MatchstickMathPuzzleAdd() {
-  const {adminToken,notify }=useContext(Context)
-
-    const [game, setGame] = useState("");
-
+  const { adminToken, notify } = useContext(Context);
+  const [game, setGame] = useState("");
   const [result, setResult] = useState("");
+  const [hint, setHint] = useState("");
+  const [gameBackenddata, setGameBackenddata] = useState([]);
+  const [resultBackenddata, setResultBackenddata] = useState([]);
+  const [level, setLevel] = useState("");
+  const [moves, setMoves] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight
+  });
 
-  const [hint, sethint] = useState("");
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+    };
 
-
-    const [gameBackenddata, setgameBackenddata] = useState([]);
-
-  const [ResultBackenddata, setResultBackenddata] = useState([]);
-
-    
-
-  const [level, setLevel] = useState(0);
-  const [moves, setMoves] = useState(0);
-
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const Patterns = {
- 
-  0: [
-    { id: 'a', status: true },
-    { id: 'b', status: true },
-    { id: 'c', status: true },
-    { id: 'd', status: false },
-    { id: 'e', status: true },
-    { id: 'f', status: true },
-    { id: 'g', status: true },
-  ],
-  1: [
-    { id: 'a', status: false },
-    { id: 'b', status: false },
-    { id: 'c', status: true },
-    { id: 'd', status: false },
-    { id: 'e', status: false },
-    { id: 'f', status: true },
-    { id: 'g', status: false },
-  ],
-  2: [
-    { id: 'a', status: true },
-    { id: 'b', status: false },
-    { id: 'c', status: true },
-    { id: 'd', status: true },
-    { id: 'e', status: true },
-    { id: 'f', status: false },
-    { id: 'g', status: true },
-  ],
-  3: [
-    { id: 'a', status: true },
-    { id: 'b', status: false },
-    { id: 'c', status: true },
-    { id: 'd', status: true },
-    { id: 'e', status: false },
-    { id: 'f', status: true },
-    { id: 'g', status: true },
-  ],
-  4: [
-    { id: 'a', status: false },
-    { id: 'b', status: true },
-    { id: 'c', status: true },
-    { id: 'd', status: true },
-    { id: 'e', status: false },
-    { id: 'f', status: true },
-    { id: 'g', status: false },
-  ],
-  5: [
-    { id: 'a', status: true },
-    { id: 'b', status: true },
-    { id: 'c', status: false },
-    { id: 'd', status: true },
-    { id: 'e', status: false },
-    { id: 'f', status: true },
-    { id: 'g', status: true },
-  ],
-  6: [
-    { id: 'a', status: true },
-    { id: 'b', status: true },
-    { id: 'c', status: false },
-    { id: 'd', status: true },
-    { id: 'e', status: true },
-    { id: 'f', status: true },
-    { id: 'g', status: true },
-  ],
-  7: [
-    { id: 'a', status: true },
-    { id: 'b', status: false },
-    { id: 'c', status: true },
-    { id: 'd', status: false },
-    { id: 'e', status: false },
-    { id: 'f', status: true },
-    { id: 'g', status: false },
-  ],
-  8: [
-    { id: 'a', status: true },
-    { id: 'b', status: true },
-    { id: 'c', status: true },
-    { id: 'd', status: true },
-    { id: 'e', status: true },
-    { id: 'f', status: true },
-    { id: 'g', status: true },
-  ],
-  9: [
-    { id: 'a', status: true },
-    { id: 'b', status: true },
-    { id: 'c', status: true },
-    { id: 'd', status: true },
-    { id: 'e', status: false },
-    { id: 'f', status: true },
-    { id: 'g', status: true },
-  ],
-
- '+': [{ id: 'a', status: true },
-    { id: 'b', status: true },] ,
-
- '-':  [{ id: 'a', status: true },
-    { id: 'b', status: false },] ,
-
-'=':  [{ id: 'a', status: true },
-    { id: 'b', status: true },] ,
-
-
+    0: [
+      { id: 'a', status: true }, { id: 'b', status: true }, { id: 'c', status: true },
+      { id: 'd', status: false }, { id: 'e', status: true }, { id: 'f', status: true },
+      { id: 'g', status: true },
+    ],
+    1: [
+      { id: 'a', status: false }, { id: 'b', status: false }, { id: 'c', status: true },
+      { id: 'd', status: false }, { id: 'e', status: false }, { id: 'f', status: true },
+      { id: 'g', status: false },
+    ],
+    2: [
+      { id: 'a', status: true }, { id: 'b', status: false }, { id: 'c', status: true },
+      { id: 'd', status: true }, { id: 'e', status: true }, { id: 'f', status: false },
+      { id: 'g', status: true },
+    ],
+    3: [
+      { id: 'a', status: true }, { id: 'b', status: false }, { id: 'c', status: true },
+      { id: 'd', status: true }, { id: 'e', status: false }, { id: 'f', status: true },
+      { id: 'g', status: true },
+    ],
+    4: [
+      { id: 'a', status: false }, { id: 'b', status: true }, { id: 'c', status: true },
+      { id: 'd', status: true }, { id: 'e', status: false }, { id: 'f', status: true },
+      { id: 'g', status: false },
+    ],
+    5: [
+      { id: 'a', status: true }, { id: 'b', status: true }, { id: 'c', status: false },
+      { id: 'd', status: true }, { id: 'e', status: false }, { id: 'f', status: true },
+      { id: 'g', status: true },
+    ],
+    6: [
+      { id: 'a', status: true }, { id: 'b', status: true }, { id: 'c', status: false },
+      { id: 'd', status: true }, { id: 'e', status: true }, { id: 'f', status: true },
+      { id: 'g', status: true },
+    ],
+    7: [
+      { id: 'a', status: true }, { id: 'b', status: false }, { id: 'c', status: true },
+      { id: 'd', status: false }, { id: 'e', status: false }, { id: 'f', status: true },
+      { id: 'g', status: false },
+    ],
+    8: [
+      { id: 'a', status: true }, { id: 'b', status: true }, { id: 'c', status: true },
+      { id: 'd', status: true }, { id: 'e', status: true }, { id: 'f', status: true },
+      { id: 'g', status: true },
+    ],
+    9: [
+      { id: 'a', status: true }, { id: 'b', status: true }, { id: 'c', status: true },
+      { id: 'd', status: true }, { id: 'e', status: false }, { id: 'f', status: true },
+      { id: 'g', status: true },
+    ],
+    '+': [{ id: 'a', status: true }, { id: 'b', status: true }],
+    '-': [{ id: 'a', status: true }, { id: 'b', status: false }],
+    '=': [{ id: 'a', status: true }, { id: 'b', status: true }],
   };
 
+  const getInputSize = () => {
+    if (windowSize.width < 640) return 'text-lg py-3 px-4';
+    if (windowSize.width < 768) return 'text-xl py-4 px-5';
+    return 'text-xl py-4 px-6';
+  };
 
-useEffect(
-    ()=>{
+  const getButtonSize = () => {
+    if (windowSize.width < 640) return 'py-3 px-6 text-base';
+    if (windowSize.width < 768) return 'py-4 px-8 text-lg';
+    return 'py-4 px-10 text-lg';
+  };
 
+  const getGridLayout = () => {
+    if (windowSize.width < 768) return 'grid-cols-1 gap-4';
+    if (windowSize.width < 1024) return 'grid-cols-2 gap-6';
+    return 'grid-cols-3 gap-8';
+  };
 
-    },[game,result]
-)
-
-
-
-
-
-
-
-
-
-const SaveHandler=()=>{
-    if(game && result ){
-    
-    const  gameArr= game?.split("")
-    const  resultArr= result?.split("")
-
-    setgameBackenddata([])
-    setResultBackenddata([])
-
-
-
-    gameArr?.map(
-        (data,index)=> {
-
-         
-
-        if( ["0","1","2","3","4","5","6","7","8","9"].includes(data) ){
-
-            const numobj={
-                  id: gameArr?.length-1==index?"result":"number",
-      value: data,
-      matchsticks: [...Patterns[data]]
-    
-            }
-setgameBackenddata(
-    predata=>{
-
-       const newarr=[...predata] 
-    newarr.push(numobj)
-return newarr
+  const SaveHandler = async () => {
+    if (!game || !result || !hint || !level || !moves) {
+      notify('Please fill all fields', 0);
+      return;
     }
-)
 
-           
-            
+    setIsLoading(true);
 
-        }
+    // Process game input
+    const gameArr = game.split("");
+    const resultArr = result.split("");
+    const tempGameData = [];
+    const tempResultData = [];
 
-          if( ["-","+",].includes(data) ){
+    // Process game array
+    gameArr.forEach((data, index) => {
+      let id;
+      if (["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].includes(data)) {
+        id = index === gameArr.length - 1 ? "result" : "number";
+        tempGameData.push({
+          id: id,
+          value: data,
+          matchsticks: [...Patterns[data]]
+        });
+      } else if (["-", "+"].includes(data)) {
+        tempGameData.push({
+          id: "operator",
+          value: data,
+          matchsticks: [...Patterns[data]]
+        });
+      } else if (data === "=") {
+        tempGameData.push({
+          id: "equals",
+          value: data,
+          matchsticks: [...Patterns[data]]
+        });
+      }
+    });
 
-            const numobj={
-                  id: "operator",
-      value: data,
-      matchsticks: [...Patterns[data]]
-    
-            }
-setgameBackenddata(
-    predata=>{
+    // Process result array
+    resultArr.forEach((data, index) => {
+      if (["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].includes(data)) {
+        const id = index === resultArr.length - 1 ? "result" : "number";
+        tempResultData.push({
+          id: id,
+          value: data,
+          matchsticks: [...Patterns[data]]
+        });
+      } else if (["-", "+"].includes(data)) {
+        tempResultData.push({
+          id: "operator",
+          value: data,
+          matchsticks: [...Patterns[data]]
+        });
+      } else if (data === "=") {
+        tempResultData.push({
+          id: "equals",
+          value: data,
+          matchsticks: [...Patterns[data]]
+        });
+      }
+    });
 
-       const newarr=[...predata] 
-    newarr.push(numobj)
-return newarr
+    if (tempGameData.length === 0 || tempResultData.length === 0) {
+      notify('Invalid input format', 0);
+      setIsLoading(false);
+      return;
     }
-)
 
-            
-            
+    const data = {
+      game: tempGameData,
+      level: parseInt(level),
+      move: parseInt(moves),
+      hint: hint,
+      result: tempResultData,
+    };
 
-        }
-
-            if( ["="].includes(data) ){
-
-            const numobj={
-      id: "equals",
-      value: data,
-      matchsticks: [...Patterns[data]]
-    
-            }
-setgameBackenddata(
-    predata=>{
-       const newarr=[...predata] 
-       newarr.push(numobj)
-return newarr
-    }
-)
-
-            
-            
-
-        }
-
-        
-
-
-        
-        
-        }
-    )
-
-      resultArr?.map(
-        (data,index)=> {
-
-         
-
-        if( ["0","1","2","3","4","5","6","7","8","9"].includes(data) ){
-
-            const numobj={
-                  id: gameArr?.length-1==index?"result":"number",
-      value: data,
-      matchsticks: [...Patterns[data]]
-    
-            }
-setResultBackenddata(
-    predata=>{
-
-       const newarr=[...predata] 
-    newarr.push(numobj)
-return newarr
-    }
-)
-
-           
-            
-
-        }
-
-          if( ["-","+",].includes(data) ){
-
-            const numobj={
-                  id: "operator",
-      value: data,
-      matchsticks: [...Patterns[data]]
-    
-            }
-setResultBackenddata(
-    predata=>{
-
-       const newarr=[...predata] 
-    newarr.push(numobj)
-return newarr
-    }
-)
-
-            
-            
-
-        }
-
-            if( ["="].includes(data) ){
-
-            const numobj={
-      id: "equals",
-      value: data,
-      matchsticks: [...Patterns[data]]
-    
-            }
-setResultBackenddata(
-    predata=>{
-       const newarr=[...predata] 
-       newarr.push(numobj)
-return newarr
-    }
-)
-
-            
-            
-
-        }
-
-        
- 
-        }
-    )
-    
-
-    
-        if(gameBackenddata?.length!=0&&adminToken && 
-          ResultBackenddata?.length!=0 && level && moves &&hint){
-
-  const data={
-  game:gameBackenddata,
-  level: level ,
-  move:moves ,
-  hint: hint,
-  result: ResultBackenddata,
-            }
-
-
-        axios.post(
+    try {
+      const response = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}${import.meta.env.VITE_MATCHSTICKPUZZLE_URL}add`,
         data,
         {
@@ -329,320 +189,262 @@ return newarr
             Authorization: adminToken,
           },
         }
+      );
 
-      )
-      .then((success) => {
-        notify(success.data.msg, success.data.status);
+      notify(response.data.msg, response.data.status);
+      if (response.data.status === 1) {
+        setGame("");
+        setResult("");
+        setHint("");
+        setLevel("");
+        setMoves("");
+        setGameBackenddata([]);
+        setResultBackenddata([]);
+      }
+    } catch (error) {
+      notify(error.message, 0);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-        if (success.data.status === 1) {
-
-          setGame("")
-          setResult("")
-          sethint("")
-          setLevel(0)
-          setMoves(0)
-          
-        }
-      })
-      .catch((error) => {
-        notify(error.message, 0);
-      });
-
-
-
-        }
-}
-
-
-
-
-
-}
-
-
-
-//   const initialGame = [
-//     { id: "item1", type: "number", value: "3" },
-//     { id: "item2", type: "operator", value: "+" },
-//     { id: "item3", type: "number", value: "5" },
-//     { id: "item4", type: "operator", value: "=" },
-//     { id: "item5", type: "number", value: "8" }
-//   ];
-
-
-  
-
-  console.log(game);
-  
-
-//   const updateValue = (id, newValue, isResult = false) => {
-//     const setter = isResult ? setResult : setGame;
-//     setter(prev => prev.map(item => 
-//       item.id === id ? { ...item, value: newValue } : item
-//     ));
-//   };
-
-//   const toggleMatchstick = (itemId, stickId, isResult = false) => {
-//     const setter = isResult ? setResult : setGame;
-//     setter(prev => prev.map(item => {
-//       if (item.id === itemId) {
-//         const pattern = item.type === 'number' ? digitPatterns[item.value] : 
-//                        item.type === 'operator' ? operatorPatterns[item.value] : {};
-        
-//         const currentMatchsticks = item.matchsticks || Object.entries(pattern).map(([id, status]) => ({
-//           id, status
-//         }));
-        
-//         const updatedMatchsticks = currentMatchsticks.map(stick => 
-//           stick.id === stickId ? { ...stick, status: !stick.status } : stick
-//         );
-        
-//         return { ...item, matchsticks: updatedMatchsticks };
-//       }
-//       return item;
-//     }));
-//   };
-
-//   const generateMatchsticks = (item) => {
-//     if (item.type === 'number') {
-//       const pattern = digitPatterns[item.value] || {};
-//       return Object.entries(pattern).map(([id, status]) => ({
-//         id,
-//         status: item.matchsticks?.find(m => m.id === id)?.status ?? status
-//       }));
-//     } else if (item.type === 'operator') {
-//       const pattern = operatorPatterns[item.value] || {};
-//       return Object.entries(pattern).map(([id, status]) => ({
-//         id,
-//         status: item.matchsticks?.find(m => m.id === id)?.status ?? status
-//       }));
-//     }
-//     return [];
-//   };
-
-//   const generateOutput = () => {
-//     const gameWithMatchsticks = game.map(item => ({
-//       ...item,
-//       matchsticks: generateMatchsticks(item)
-//     }));
-
-//     const resultWithMatchsticks = result.map(item => ({
-//       ...item,
-//       matchsticks: generateMatchsticks(item)
-//     }));
-
-//     const output = {
-//       game: gameWithMatchsticks,
-//       level,
-//       move: moves,
-//       result: resultWithMatchsticks
-//     };
-
-//     setJsonOutput(JSON.stringify(output, null, 2));
-//   };
-
-//   const DigitDisplay = ({ item, onToggle, isResult = false }) => {
-//     const matchsticks = generateMatchsticks(item);
-//     const segments = [
-//       { id: 'a', className: 'top' },
-//       { id: 'b', className: 'top-right' },
-//       { id: 'c', className: 'bottom-right' },
-//       { id: 'd', className: 'bottom' },
-//       { id: 'e', className: 'bottom-left' },
-//       { id: 'f', className: 'top-left' },
-//       { id: 'g', className: 'middle' }
-//     ];
-
-//     return (
-//       <div className="relative w-16 h-24 bg-gray-900 rounded-lg p-2">
-//         <div className="absolute inset-0 flex items-center justify-center">
-//           <span className="text-2xl font-bold text-white">{item.value}</span>
-//         </div>
-//         {segments.map(seg => {
-//           const matchstick = matchsticks.find(m => m.id === seg.id);
-//           if (!matchstick) return null;
-          
-//           return (
-//             <div
-//               key={seg.id}
-//               className={`absolute w-1 bg-yellow-400 transition-all duration-200 ${
-//                 matchstick.status ? 'opacity-100' : 'opacity-30'
-//               } ${seg.className}`}
-//               onClick={() => onToggle(item.id, seg.id, isResult)}
-//             />
-//           );
-//         })}
-//       </div>
-//     );
-//   };
-
-//   const OperatorDisplay = ({ item, onToggle, isResult = false }) => {
-//     const matchsticks = generateMatchsticks(item);
-    
-//     return (
-//       <div className="relative w-12 h-24 flex items-center justify-center">
-//         <span className="text-3xl font-bold text-white">{item.value}</span>
-//         <div className="absolute space-y-2">
-//           {matchsticks.map(stick => (
-//             <div
-//               key={stick.id}
-//               className={`w-8 h-1 bg-yellow-400 transition-all duration-200 ${
-//                 stick.status ? 'opacity-100' : 'opacity-30'
-//               } ${stick.id === 'b' ? 'rotate-90' : ''}`}
-//               onClick={() => onToggle(item.id, stick.id, isResult)}
-//             />
-//           ))}
-//         </div>
-//       </div>
-//     );
-//   };
-
-//   const ItemEditor = ({ item, onUpdate, onToggle, isResult = false }) => {
-//     return (
-//       <div className="flex flex-col items-center space-y-2 p-4 bg-gray-800 rounded-lg">
-//         <div className="flex space-x-2">
-//           <select
-//             value={item.type}
-//             onChange={(e) => onUpdate(item.id, 'type', e.target.value, isResult)}
-//             className="px-2 py-1 bg-gray-700 text-white rounded"
-//           >
-//             <option value="number">Number</option>
-//             <option value="operator">Operator</option>
-//           </select>
-          
-//           {item.type === 'number' ? (
-//             <select
-//               value={item.value}
-//               onChange={(e) => onUpdate(item.id, 'value', e.target.value, isResult)}
-//               className="px-2 py-1 bg-gray-700 text-white rounded"
-//             >
-//               {['0','1','2','3','4','5','6','7','8','9'].map(num => (
-//                 <option key={num} value={num}>{num}</option>
-//               ))}
-//             </select>
-//           ) : (
-//             <select
-//               value={item.value}
-//               onChange={(e) => onUpdate(item.id, 'value', e.target.value, isResult)}
-//               className="px-2 py-1 bg-gray-700 text-white rounded"
-//             >
-//               <option value="+">+</option>
-//               <option value="-">-</option>
-//               <option value="=">=</option>
-//             </select>
-//           )}
-//         </div>
-
-//         {item.type === 'number' ? (
-//           <DigitDisplay item={item} onToggle={onToggle} isResult={isResult} />
-//         ) : (
-//           <OperatorDisplay item={item} onToggle={onToggle} isResult={isResult} />
-//         )}
-//       </div>
-//     );
-//   };
+  const inputSize = getInputSize();
+  const buttonSize = getButtonSize();
+  const gridLayout = getGridLayout();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-pink-800 p-6">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 sm:p-6 md:p-8">
+      {/* Animated Background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-60 h-60 bg-emerald-500/5 rounded-full blur-3xl"></div>
+      </div>
 
-        <h1 className="text-4xl font-bold text-white text-center mb-8">
-          Matchstick Math Puzzle Creator
-        </h1>
-
-        {/* Controls */}
-        <div className="grid grid-cols-2 gap-6 mb-8">
-          <div className="bg-gray-800 p-4 rounded-lg">
-            <label className="block text-white mb-2">Level</label>
-            <input
-              type="number"
-              value={level}
-              onChange={(e) => setLevel(parseInt(e.target.value))}
-              className="w-full p-2 bg-gray-700 text-white rounded"
-            />
-          </div>
-          <div className="bg-gray-800 p-4 rounded-lg">
-            <label className="block text-white mb-2">Moves</label>
-            <input
-              type="number"
-              value={moves}
-              onChange={(e) => setMoves(parseInt(e.target.value))}
-              className="w-full p-2 bg-gray-700 text-white rounded"
-            />
+      <div className="relative max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8 sm:mb-12 md:mb-16">
+          <div className="inline-block mb-4 sm:mb-6">
+            <div className="bg-gradient-to-r from-cyan-500 to-purple-600 p-0.5 rounded-2xl sm:rounded-3xl shadow-2xl">
+              <div className="bg-slate-900 rounded-2xl sm:rounded-3xl px-6 sm:px-8 py-4 sm:py-6">
+                <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent mb-2 sm:mb-4">
+                  Create Matchstick Puzzle
+                </h1>
+                <p className="text-slate-300 text-sm sm:text-base md:text-lg max-w-2xl mx-auto">
+                  Design challenging mathematical puzzles with matchstick interactions
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
-<div className=' flex gap-2 justify-between items-center'>
+        {/* Main Form */}
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-white/10 shadow-2xl p-6 sm:p-8 md:p-10 mb-8">
+          {/* Level and Moves */}
+          <div className={`grid ${gridLayout} mb-8`}>
+            <div className="space-y-2">
+              <label className="block text-slate-200 text-sm font-semibold mb-2">
+                Level Number
+              </label>
+              <input
+                type="number"
+                value={level}
+                onChange={(e) => setLevel(e.target.value)}
+                placeholder="Enter level number"
+                className={`w-full bg-slate-800/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300 ${inputSize}`}
+              />
+            </div>
 
-<div className=' border-2 p-2  '>
+            <div className="space-y-2">
+              <label className="block text-slate-200 text-sm font-semibold mb-2">
+                Allowed Moves
+              </label>
+              <input
+                type="number"
+                value={moves}
+                onChange={(e) => setMoves(e.target.value)}
+                placeholder="Enter number of moves"
+                className={`w-full bg-slate-800/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300 ${inputSize}`}
+              />
+            </div>
 
-    <p>Puzzle</p>
+            <div className="space-y-2">
+              <label className="block text-slate-200 text-sm font-semibold mb-2">
+                Hint
+              </label>
+              <input
+                type="text"
+                value={hint}
+                onChange={(e) => setHint(e.target.value)}
+                placeholder="Enter puzzle hint"
+                className={`w-full bg-slate-800/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300 ${inputSize}`}
+              />
+            </div>
+          </div>
 
-    <label htmlFor="">use numbers only 0 to 9</label>
+          {/* Puzzle Inputs */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8">
+            {/* Puzzle Input */}
+            <div className="bg-slate-800/30 rounded-2xl p-6 border border-slate-700/50">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg sm:text-xl font-semibold text-cyan-400">
+                  Puzzle Equation
+                </h3>
+                <div className="w-8 h-8 bg-cyan-500/20 rounded-lg flex items-center justify-center">
+                  <svg className="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                <label className="block text-slate-300 text-sm mb-2">
+                  Enter the initial equation (e.g., "3+5=8")
+                </label>
+                <input
+                  type="text"
+                  value={game}
+                  onChange={(e) => {
+                    setGame(e.target.value);
+                    setGameBackenddata([]);
+                  }}
+                  placeholder="Example: 3+5=8"
+                  className={`w-full bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300 ${inputSize}`}
+                />
+                <p className="text-xs text-slate-400">
+                  Use numbers (0-9), operators (+, -), and equals (=) only
+                </p>
+              </div>
+            </div>
 
-    <input type="text"   className='block px-2'
-     onChange={(e)=>{setGame(e.target.value)
+            {/* Result Input */}
+            <div className="bg-slate-800/30 rounded-2xl p-6 border border-slate-700/50">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg sm:text-xl font-semibold text-purple-400">
+                  Solution Equation
+                </h3>
+                <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                  <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                <label className="block text-slate-300 text-sm mb-2">
+                  Enter the solved equation (e.g., "9-5=4")
+                </label>
+                <input
+                  type="text"
+                  value={result}
+                  onChange={(e) => {
+                    setResult(e.target.value);
+                    setResultBackenddata([]);
+                  }}
+                  placeholder="Example: 9-5=4"
+                  className={`w-full bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 ${inputSize}`}
+                />
+                <p className="text-xs text-slate-400">
+                  This should be the correct solution after moving matchsticks
+                </p>
+              </div>
+            </div>
+          </div>
 
-      setgameBackenddata([])
-     }} 
-     />
+          {/* Preview Section */}
+          {(game || result) && (
+            <div className="bg-slate-800/20 rounded-2xl p-6 border border-slate-700/30 mb-8">
+              <h3 className="text-lg font-semibold text-slate-200 mb-4">Preview</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {game && (
+                  <div className="text-center">
+                    <p className="text-slate-400 text-sm mb-2">Puzzle</p>
+                    <div className="bg-slate-800/50 rounded-xl p-4">
+                      <p className="text-2xl sm:text-3xl font-mono text-cyan-300">{game}</p>
+                    </div>
+                  </div>
+                )}
+                {result && (
+                  <div className="text-center">
+                    <p className="text-slate-400 text-sm mb-2">Solution</p>
+                    <div className="bg-slate-800/50 rounded-xl p-4">
+                      <p className="text-2xl sm:text-3xl font-mono text-purple-300">{result}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
+          {/* Submit Button */}
+          <div className="flex justify-center">
+            <button
+              onClick={SaveHandler}
+              disabled={isLoading}
+              className={`
+                bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 
+                text-white font-semibold rounded-xl shadow-2xl transform transition-all duration-300 
+                hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed
+                ${buttonSize}
+              `}
+            >
+              {isLoading ? (
+                <div className="flex items-center space-x-2">
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span>Creating Puzzle...</span>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-2">
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Create Matchstick Puzzle</span>
+                </div>
+              )}
+            </button>
+          </div>
+        </div>
 
-</div>
-
-
-<div className=' border-2 p-2  '>
-
-    <p>Result</p>
-
-    <label htmlFor="">use numbers only 0 to 9</label>
-
-    <input type="text" className='block px-2'
-     onChange={(e)=>{setResult(e.target.value)
-
-      setResultBackenddata([])
-     }} 
-     />
-
-
-</div>
-
-
-<div className=' border-2 p-2  '>
-
-    <p>Hint</p>
-
-    <label htmlFor="">use numbers only 0 to 9</label>
-
-    <input type="text" className='block px-2'
-     onChange={(e)=>{sethint(e.target.value)
-
-     
-     }} 
-     />
-
-
-</div>
-
-
-<div>
-    
-</div>
-
-
-<div>
-    
-</div>
-</div>
-
-
-<button className='px-3 py-1 border-2' onClick={()=>SaveHandler() }>
-    save
-</button>
-
-
+        {/* Instructions */}
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl p-6 sm:p-8">
+          <h3 className="text-lg sm:text-xl font-semibold text-slate-200 mb-4 flex items-center">
+            <svg className="w-5 h-5 mr-2 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Instructions
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-slate-300">
+            <ul className="space-y-2 text-sm sm:text-base">
+              <li className="flex items-start">
+                <span className="text-cyan-400 mr-2">•</span>
+                Use numbers 0-9, operators + - = only
+              </li>
+              <li className="flex items-start">
+                <span className="text-cyan-400 mr-2">•</span>
+                Equations must be mathematically valid
+              </li>
+              <li className="flex items-start">
+                <span className="text-cyan-400 mr-2">•</span>
+                Solution should be achievable within moves
+              </li>
+            </ul>
+            <ul className="space-y-2 text-sm sm:text-base">
+              <li className="flex items-start">
+                <span className="text-purple-400 mr-2">•</span>
+                Level number determines difficulty order
+              </li>
+              <li className="flex items-start">
+                <span className="text-purple-400 mr-2">•</span>
+                Moves should challenge but be solvable
+              </li>
+              <li className="flex items-start">
+                <span className="text-purple-400 mr-2">•</span>
+                Hint should guide without giving away solution
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   );
-};
-
+}

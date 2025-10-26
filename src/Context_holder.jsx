@@ -32,15 +32,19 @@ export default function Context_holder(props) {
   const [CrosswordPuzzleScore_id, setCrosswordPuzzleScore_id] = useState(null);
   const [CrosswordPuzzlePreviousScore, setCrosswordPuzzlePreviousScore] =
     useState(null);
-  const [AllSudoko, setAllSudoko] = useState([]);
-  const [Sudoko, setSudoko] = useState(null);
 
-    const [AllRiddles, setAllRiddles] = useState([]);
-  const [Riddles, setRiddles] = useState(null);
+const [AllSudoko, setAllSudoko] = useState([]);
+
+const [Sudoko, setSudoko] = useState(null);
+
+const [AllRiddles, setAllRiddles] = useState([]);
+
+const [Riddles, setRiddles] = useState(null);
 
 const [AllMatchistickPuzzles, setAllMatchistickPuzzles] = useState([]);
 
 const [MatchistickPuzzles, setMatchistickPuzzles] = useState(null);
+const [MatchistickPuzzleScore, setMatchistickPuzzleScore] = useState(null);
 
 
   const notify = (msg, status) => {
@@ -223,6 +227,36 @@ const [MatchistickPuzzles, setMatchistickPuzzles] = useState(null);
 
       .catch((error) => {});
   };
+
+
+        const MatchistickPuzzleScoreFetch = (id) => {
+   
+
+    let api =`${import.meta.env.VITE_API_BASE_URL}${
+      import.meta.env.VITE_MATCHISTICKSCORESCORE_URL
+    }read`;
+
+    if (id) {
+      api += `/${id}`;
+    }
+
+     
+
+
+    axios.get(api)
+
+      .then((success) => {
+        if (success.data.status == 1) {
+
+          const data=success.data.MatchistickScore;
+
+            setMatchistickPuzzleScore(data);
+
+        }
+      })
+
+      .catch((error) => {});
+  };
   
 
  const menu_links = [
@@ -315,7 +349,7 @@ const [MatchistickPuzzles, setMatchistickPuzzles] = useState(null);
         setSudoko,
         AllSudoko,
         setAllSudoko,
-        SudokoFetch,AllRiddles, setAllRiddles,Riddles, setRiddles,RiddlesFetch,MatchistickPuzzleFetch,AllMatchistickPuzzles,setAllMatchistickPuzzles,  MatchistickPuzzles,setMatchistickPuzzles
+        SudokoFetch,AllRiddles, setAllRiddles,Riddles, setRiddles,RiddlesFetch,MatchistickPuzzleFetch,AllMatchistickPuzzles,setAllMatchistickPuzzles,  MatchistickPuzzles,setMatchistickPuzzles,setMatchistickPuzzleScore,MatchistickPuzzleScore,MatchistickPuzzleScoreFetch
       }}
     >
       {props.children}

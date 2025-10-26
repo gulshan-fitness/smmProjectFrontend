@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 export default function SSM() {
 
-const buttons=[{name:"Crossword Puzzle", link:"/crosswordpuzzle"},{name:"Sudoko", link:"/sudoko"},{name:"Riddles", link:"/Riddles"},]
+const buttons=[{name:"Crossword Puzzle", link:"/crosswordpuzzle"},{name:"Sudoko", link:"/sudoko"},{name:"Riddles", link:"/Riddles"},{name:"Matchstick Puzzle", link:"/matchstickpuzzleLevels"},]
 
   return (
     <section className="min-h-screen bg-black text-white px-6 py-12 flex flex-col items-center justify-center">
