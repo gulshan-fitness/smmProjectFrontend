@@ -65,7 +65,7 @@ export default function RiddlesList() {
                 </p>
                 <div className="flex gap-3">
                   <Link
-                    to={`/riddles/edit/${riddle._id}`}
+                    to={`/adminprofile/riddles/edit/${riddle._id}`}
                     className="px-4 py-2 bg-yellow-500 text-black font-semibold rounded-md hover:bg-black hover:text-yellow-500 border border-yellow-500 transition duration-300 text-sm"
                   >
                     Edit

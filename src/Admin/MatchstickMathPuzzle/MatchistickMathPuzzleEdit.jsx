@@ -1,36 +1,39 @@
+
 import axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Context } from '../../Context_holder';
 
-export default function MatchstickMathPuzzleAdd() {
-  const { adminToken, notify } = useContext(Context);
+export default function MatchistickMathPuzzleEdit(){
+
+  const { adminToken, notify ,MatchistickPuzzles,MatchistickPuzzleFetch} = useContext(Context);
+
+  const { id } = useParams();
+
+  const navigate = useNavigate();
+  
   const [game, setGame] = useState("");
+
   const [result, setResult] = useState("");
+  
   const [hint, setHint] = useState("");
+
   const [gameBackenddata, setGameBackenddata] = useState([]);
   const [resultBackenddata, setResultBackenddata] = useState([]);
   const [level, setLevel] = useState("");
   const [moves, setMoves] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [fetchLoading, setFetchLoading] = useState(true);
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight
   });
 
   useEffect(() => {
-    const handleResize = () => {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight
-      });
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+MatchistickPuzzleFetch(id)
+  }, [id]);
 
   const Patterns = {
-
     0: [
       { id: 'a', status: true }, { id: 'b', status: true }, { id: 'c', status: true },
       { id: 'd', status: false }, { id: 'e', status: true }, { id: 'f', status: true },
@@ -81,11 +84,80 @@ export default function MatchstickMathPuzzleAdd() {
       { id: 'd', status: true }, { id: 'e', status: false }, { id: 'f', status: true },
       { id: 'g', status: true },
     ],
-    
     '+': [{ id: 'a', status: true }, { id: 'b', status: true }],
     '-': [{ id: 'a', status: true }, { id: 'b', status: false }],
     '=': [{ id: 'a', status: true }, { id: 'b', status: true }],
   };
+
+  useEffect(
+    ()=>{
+
+      if(MatchistickPuzzles?.length!=0){
+
+        setFetchLoading(false)
+
+         setLevel(MatchistickPuzzles?.level.toString());
+        setMoves(MatchistickPuzzles?.move.toString());
+        setHint(MatchistickPuzzles?.hint);
+        
+        // Convert game array to string
+        const gameString = MatchistickPuzzles?.game.map(item => item.value).join('');
+        setGame(gameString);
+        
+        // Convert result array to string
+        const resultString = MatchistickPuzzles?.result.map(item => item.value).join('');
+        setResult(resultString);
+        
+        // Store backend data for reference
+        setGameBackenddata(MatchistickPuzzles?.game);
+        setResultBackenddata(MatchistickPuzzles?.result);
+      }
+
+
+
+    },
+    [MatchistickPuzzles]
+  )
+
+  // const fetchPuzzleData = async () => {
+  //   try {
+  //     setFetchLoading(true);
+  //     const response = await axios.get(
+  //       `${import.meta.env.VITE_API_BASE_URL}${import.meta.env.VITE_MATCHSTICKPUZZLE_URL}read/${id}`,
+  //       {
+  //         headers: {
+  //           Authorization: adminToken,
+  //         },
+  //       }
+  //     );
+      
+  //     const puzzle = response.data.data;
+  //     if (puzzle) {
+  //       // Pre-fill the form with existing data
+  //       setLevel(puzzle.level.toString());
+  //       setMoves(puzzle.move.toString());
+  //       setHint(puzzle.hint);
+        
+  //       // Convert game array to string
+  //       const gameString = puzzle.game.map(item => item.value).join('');
+  //       setGame(gameString);
+        
+  //       // Convert result array to string
+  //       const resultString = puzzle.result.map(item => item.value).join('');
+  //       setResult(resultString);
+        
+  //       // Store backend data for reference
+  //       setGameBackenddata(puzzle.game);
+  //       setResultBackenddata(puzzle.result);
+  //     }
+  //   } catch (error) {
+  //     notify('Failed to fetch puzzle data', 0);
+  //     console.error('Error fetching puzzle:', error);
+  //     navigate('/matchstick-puzzles');
+  //   } finally {
+  //     setFetchLoading(false);
+  //   }
+  // };
 
   const getInputSize = () => {
     if (windowSize.width < 640) return 'text-lg py-3 px-4';
@@ -105,7 +177,7 @@ export default function MatchstickMathPuzzleAdd() {
     return 'grid-cols-3 gap-8';
   };
 
-  const SaveHandler = async () => {
+  const UpdateHandler = async () => {
     if (!game || !result || !hint || !level || !moves) {
       notify('Please fill all fields', 0);
       return;
@@ -183,8 +255,8 @@ export default function MatchstickMathPuzzleAdd() {
     };
 
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}${import.meta.env.VITE_MATCHSTICKPUZZLE_URL}add`,
+      const response = await axios.put(
+        `${import.meta.env.VITE_API_BASE_URL}${import.meta.env.VITE_MATCHSTICKPUZZLE_URL}edit/${id}`,
         data,
         {
           headers: {
@@ -194,14 +266,10 @@ export default function MatchstickMathPuzzleAdd() {
       );
 
       notify(response.data.msg, response.data.status);
-      if (response.data.status === 1) {
-        setGame("");
-        setResult("");
-        setHint("");
-        setLevel("");
-        setMoves("");
-        setGameBackenddata([]);
-        setResultBackenddata([]);
+      if (response.data.status === 1){
+       
+       MatchistickPuzzleFetch(id)
+
       }
     } catch (error) {
       notify(error.message, 0);
@@ -210,9 +278,24 @@ export default function MatchstickMathPuzzleAdd() {
     }
   };
 
+  const CancelHandler = () => {
+    navigate('/matchstick-puzzles');
+  };
+
   const inputSize = getInputSize();
   const buttonSize = getButtonSize();
   const gridLayout = getGridLayout();
+
+  if (fetchLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#111] via-[#0a0a0a] to-[#111] flex items-center justify-center p-4">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[#ffd700] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-[#ffd700] text-lg">Loading Puzzle Data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#111] via-[#0a0a0a] to-[#111] p-4 sm:p-6 md:p-8">
@@ -230,11 +313,18 @@ export default function MatchstickMathPuzzleAdd() {
             <div className="bg-gradient-to-r from-[#ffd700] to-[#ffed4e] p-0.5 rounded-2xl sm:rounded-3xl shadow-2xl shadow-[#ffd700]/20">
               <div className="bg-[#111] rounded-2xl sm:rounded-3xl px-6 sm:px-8 py-4 sm:py-6 border border-[#ffd700]/10">
                 <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#ffd700] to-[#ffed4e] bg-clip-text text-transparent mb-2 sm:mb-4">
-                  Create Matchstick Puzzle
+                  Edit Matchstick Puzzle
                 </h1>
                 <p className="text-[#ffd700]/80 text-sm sm:text-base md:text-lg max-w-2xl mx-auto">
-                  Design challenging mathematical puzzles with matchstick interactions
+                  Update and modify your mathematical puzzle
                 </p>
+                <div className="mt-3 flex items-center justify-center space-x-2 text-[#ffd700]/60">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <span className="text-sm">Editing Level {level}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -378,33 +468,35 @@ export default function MatchstickMathPuzzleAdd() {
             </div>
           )}
 
-          {/* Submit Button */}
-          <div className="flex justify-center">
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
-              onClick={SaveHandler}
+              onClick={UpdateHandler}
               disabled={isLoading}
               className={`
                 bg-gradient-to-r from-[#ffd700] to-[#ffed4e] hover:from-[#ffed4e] hover:to-[#ffd700] 
                 text-[#111] font-bold rounded-xl shadow-2xl shadow-[#ffd700]/30 transform transition-all duration-300 
                 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed
                 border border-[#ffd700]/50
-                ${buttonSize}
+                ${buttonSize} flex-1
               `}
             >
               {isLoading ? (
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 justify-center">
                   <div className="w-5 h-5 border-2 border-[#111] border-t-transparent rounded-full animate-spin"></div>
-                  <span>Creating Puzzle...</span>
+                  <span>Updating Puzzle...</span>
                 </div>
               ) : (
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 justify-center">
                   <svg className="w-5 h-5 text-[#111]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span>Create Matchstick Puzzle</span>
+                  <span>Update Puzzle</span>
                 </div>
               )}
             </button>
+            
+           
           </div>
         </div>
 
@@ -414,35 +506,35 @@ export default function MatchstickMathPuzzleAdd() {
             <svg className="w-5 h-5 mr-2 text-[#ffd700]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            Instructions
+            Editing Instructions
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[#ffd700]/80">
             <ul className="space-y-2 text-sm sm:text-base">
               <li className="flex items-start">
                 <span className="text-[#ffd700] mr-2">•</span>
-                Use numbers 0-9, operators + - = only
+                Modify any field to update the puzzle
               </li>
               <li className="flex items-start">
                 <span className="text-[#ffd700] mr-2">•</span>
-                Equations must be mathematically valid
+                Equations must remain mathematically valid
               </li>
               <li className="flex items-start">
                 <span className="text-[#ffd700] mr-2">•</span>
-                Solution should be achievable within moves
+                Ensure solution is achievable within moves
               </li>
             </ul>
             <ul className="space-y-2 text-sm sm:text-base">
               <li className="flex items-start">
                 <span className="text-[#ffd700] mr-2">•</span>
-                Level number determines difficulty order
+                Level number affects difficulty ordering
               </li>
               <li className="flex items-start">
                 <span className="text-[#ffd700] mr-2">•</span>
-                Moves should challenge but be solvable
+                Update hint to reflect any changes
               </li>
               <li className="flex items-start">
                 <span className="text-[#ffd700] mr-2">•</span>
-                Hint should guide without giving away solution
+                All fields are required for update
               </li>
             </ul>
           </div>

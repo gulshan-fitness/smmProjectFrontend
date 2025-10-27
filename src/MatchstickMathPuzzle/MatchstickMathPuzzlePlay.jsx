@@ -297,8 +297,10 @@ const EquationComponent = ({ item, index, setEquation, VerifyHandler, ShowMoves,
   switch (item.id) {
     case "number":
       return <Num matchsticks={item.matchsticks} setEquation={setEquation} numIndex={index} VerifyHandler={VerifyHandler} ShowMoves={ShowMoves} UseMoves={UseMoves} />;
+      
     case "operator":
       return <Operator matchsticks={item.matchsticks} setEquation={setEquation} operatorIndex={index} VerifyHandler={VerifyHandler} ShowMoves={ShowMoves} UseMoves={UseMoves} />;
+
     case "equals":
       return <Equals matchsticks={item.matchsticks} setEquation={setEquation} equalsIndex={index} VerifyHandler={VerifyHandler} ShowMoves={ShowMoves} UseMoves={UseMoves} />;
     case "result":
@@ -329,14 +331,15 @@ const  Nextindex = AllMatchistickPuzzles?.findIndex(d=>d?._id ==id)+1
 
 const Nextindex_id= AllMatchistickPuzzles[AllMatchistickPuzzles?.findIndex(d=>d?._id ==id)+1]?._id
 
-console.log(Nextindex,"Nextindex",showMoves,AllMatchistickPuzzles?.length);
 
-  
 
   useEffect(() => {
     MatchistickPuzzleFetch(id);
     MatchistickPuzzleFetch()
   }, [id]);
+
+
+
 
   useEffect(() => {
     if (MatchistickPuzzles) {
@@ -422,7 +425,6 @@ const score={
         <p>Level {MatchistickPuzzles?.level}</p>
         <p>Moves: {showMoves}/{MatchistickPuzzles?.move}</p>
         <p>Puzzle {MatchistickPuzzles?.level}</p>
-
       </div>
 
       {/* Instructions */}

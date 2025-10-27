@@ -40,6 +40,10 @@ import MatchstickMathPuzzleAdd from "./Admin/MatchstickMathPuzzle/MatchstickMath
 import MatchstickMathPuzzlePlay from "./MatchstickMathPuzzle/MatchstickMathPuzzlePlay";
 import UserLive from "./UserLive";
 import MatchisickPuzzleList from "./MatchstickMathPuzzle/MatchisickPuzzleList";
+import MatchistickMathPuzzleView from "./Admin/MatchstickMathPuzzle/MatchistickMathPuzzleView";
+import MatchistickMathPuzzleEdit from "./Admin/MatchstickMathPuzzle/MatchistickMathPuzzleEdit";
+import RiddlesEdit from "./Admin/Riddles/RiddlesEdit";
+import UserList from "./User/UserList";
 
 function App() {
   const { setadmin, setadminToken, setuser, setusertoken, setIsScrolled } =
@@ -258,21 +262,30 @@ function App() {
           element: <CrosswordPuzzleEdit/>,
         },
 
-           {
+        {
           path: "sudoko/add",
           element: <SudokoAdd />,
         },
-             {
+        
+        {
           path: "sudoko/view",
           element: <SudokoListAdmin />,
         },
-             {
+
+      {
           path: "sudoko/edit/:id",
           element: <SudokoEdit/>,
         },
 
+           {
+          path: "usersList",
+          element: <UserList/>,
+        },
 
-                 {
+        
+
+
+        {
           path: "riddles/add",
           element: <RiddlesAdd />,
         },
@@ -282,7 +295,7 @@ function App() {
         },
              {
           path: "riddles/edit/:id",
-          element: <SudokoEdit/>,
+          element: <RiddlesEdit/>,
         },
 
 
@@ -293,11 +306,11 @@ function App() {
         },
              {
           path: "matchstickpuzzle/view",
-          element: <RiddlesView />,
+          element: <MatchistickMathPuzzleView />,
         },
              {
           path: "matchstickpuzzle/edit/:id",
-          element: <SudokoEdit/>,
+          element: <MatchistickMathPuzzleEdit/>,
         },
         
         

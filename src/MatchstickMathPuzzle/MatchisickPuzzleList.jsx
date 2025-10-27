@@ -3,8 +3,10 @@ import { Context } from '../Context_holder'
 import { Link } from 'react-router-dom'
 
 export default function MatchstickPuzzleList() {
-  const { MatchistickPuzzleFetch, AllMatchistickPuzzles, MatchistickPuzzleScore, MatchistickPuzzleScoreFetch } = useContext(Context)
+  const { MatchistickPuzzleFetch,AllMatchistickPuzzles,MatchistickPuzzleScore,MatchistickPuzzleScoreFetch }=useContext(Context)
+
   const [completedLevels, setCompletedLevels] = useState(new Set())
+
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight
