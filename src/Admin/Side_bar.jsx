@@ -19,7 +19,7 @@ export default function Side_bar() {
         {/* Menu */}
         <div className="flex-1 overflow-y-auto">
           <ul className="py-4">
-            {menu_links.map((data, index) => (
+            {menu_links?.map((data, index) => (
               <div
                 key={index}
                 className={`relative items-center py-2 px-4 mb-1 rounded transition-all duration-300 hover:bg-[#1c1c1c] ${
@@ -34,7 +34,7 @@ export default function Side_bar() {
                     {data?.icon}
                 {/* Main Link */}
                 <Link
-                  to={data.url!==null &&data.url}
+                 to={data?.url!==null&&data?.url}
                   className="  group-hover:translate-x-1 whitespace-nowrap truncate duration-300 font-medium text-md"
                 >
                  { data.name}

@@ -66,14 +66,16 @@ export default function Admin_Headbaar() {
               highlight === data.name ? "bg-[#FFD700] text-black" : "text-[#FFD700]"
             } hover:bg-[#1c1c1c]  gap-2 group`}
           >
-
   <div className=' flex gap-2 items-center'>
-
                     {data?.icon}
             <Link
-              to={data.url}
+
+            to={data?.url!==null&&data?.url}
+
               className="block group-hover:translate-x-2 duration-300 whitespace-nowrap truncate font-semibold text-lg"
-              onClick={() => page_jump_handler(data)}
+
+              onClick={() =>{data?.url!==null&& page_jump_handler(data)}}
+              
             >
               {data.name}
             </Link>
