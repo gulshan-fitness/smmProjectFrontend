@@ -34,7 +34,7 @@ export default function Side_bar() {
                     {data?.icon}
                 {/* Main Link */}
                 <Link
-                  to={data.url}
+                  to={data.url!==null &&data.url}
                   className="  group-hover:translate-x-1 whitespace-nowrap truncate duration-300 font-medium text-md"
                 >
                  { data.name}

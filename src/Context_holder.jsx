@@ -348,7 +348,7 @@ const menu_links = [
   },
   {
     name: "Crossword Puzzle",
-    url: "",
+    url: null,
     icon: <MdGridOn className="text-xl" />,
     subitems: [
       { name: "Add", url: "crosswordpuzzle/add", icon: <MdAdd /> },
@@ -357,7 +357,7 @@ const menu_links = [
   },
   {
     name: "Sudoku",
-    url: "",
+    url: null,
     icon: <MdCalculate className="text-xl" />,
     subitems: [
       { name: "Add", url: "sudoko/add", icon: <MdAdd /> },
@@ -366,7 +366,7 @@ const menu_links = [
   },
   {
     name: "Riddles",
-    url: "",
+    url: null,
     icon: <MdQuestionAnswer className="text-xl" />,
     subitems: [
       { name: "Add", url: "riddles/add", icon: <MdAdd /> },
@@ -375,7 +375,7 @@ const menu_links = [
   },
   {
     name: "Matchstick Puzzle",
-    url: "",
+    url: null,
     icon: <MdSmartToy className="text-xl" />,
     subitems: [
       { name: "Add", url: "matchstickpuzzle/add", icon: <MdAdd /> },
