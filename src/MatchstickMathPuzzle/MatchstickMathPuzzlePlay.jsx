@@ -436,7 +436,9 @@ const score={
       {/* Equation Display */}
       <div className="w-full max-w-4xl flex justify-center">
         {equation?.length !== 0 ? (
+
           <div className="bg-gray-900 flex flex-wrap justify-center gap-2 sm:gap-3 p-4 sm:p-6 rounded-lg shadow-xl border border-gray-700">
+
             {equation?.map((item, index) => (
               <div key={index} className="flex-shrink-0">
                 <EquationComponent
@@ -454,6 +456,13 @@ const score={
           <div className="text-white text-xl font-bold animate-pulse">Loading...</div>
         )}
       </div>
+
+  <div className="flex items-center justify-center mt-3">
+  <Link to={"/matchstickpuzzleLevels"}  className="px-4 py-2 bg-black border border-cyan-400 rounded-md text-cyan-300 font-semibold text-sm transition-all duration-300 hover:bg-cyan-400 hover:text-black hover:shadow-[0_0_15px_3px_rgba(34,211,238,0.4)] relative overflow-hidden group">
+    <span className="relative z-10">Levels</span>
+    <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-md blur opacity-20 group-hover:opacity-40 transition duration-300"></div>
+  </Link >
+</div>
 
 
       <div className=" flex justify-center items-center">
