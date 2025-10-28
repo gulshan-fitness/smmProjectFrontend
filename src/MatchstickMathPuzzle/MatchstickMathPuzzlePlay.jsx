@@ -3,8 +3,8 @@ import { Link, useParams } from "react-router-dom";
 import { Context } from "../Context_holder";
 import axios from "axios";
 
+
 const Patterns = {
-  // ... (your existing Patterns object remains the same)
   0: [
     { id: 'a', status: true },
     { id: 'b', status: true },
@@ -23,125 +23,93 @@ const Patterns = {
     { id: 'f', status: true },
     { id: 'g', status: false },
   ],
-  // ... rest of patterns
+  2: [
+    { id: 'a', status: true },
+    { id: 'b', status: false },
+    { id: 'c', status: true },
+    { id: 'd', status: true },
+    { id: 'e', status: true },
+    { id: 'f', status: false },
+    { id: 'g', status: true },
+  ],
+  3: [
+    { id: 'a', status: true },
+    { id: 'b', status: false },
+    { id: 'c', status: true },
+    { id: 'd', status: true },
+    { id: 'e', status: false },
+    { id: 'f', status: true },
+    { id: 'g', status: true },
+  ],
+  4: [
+    { id: 'a', status: false },
+    { id: 'b', status: true },
+    { id: 'c', status: true },
+    { id: 'd', status: true },
+    { id: 'e', status: false },
+    { id: 'f', status: true },
+    { id: 'g', status: false },
+  ],
+  5: [
+    { id: 'a', status: true },
+    { id: 'b', status: true },
+    { id: 'c', status: false },
+    { id: 'd', status: true },
+    { id: 'e', status: false },
+    { id: 'f', status: true },
+    { id: 'g', status: true },
+  ],
+  6: [
+    { id: 'a', status: true },
+    { id: 'b', status: true },
+    { id: 'c', status: false },
+    { id: 'd', status: true },
+    { id: 'e', status: true },
+    { id: 'f', status: true },
+    { id: 'g', status: true },
+  ],
+  7: [
+    { id: 'a', status: true },
+    { id: 'b', status: false },
+    { id: 'c', status: true },
+    { id: 'd', status: false },
+    { id: 'e', status: false },
+    { id: 'f', status: true },
+    { id: 'g', status: false },
+  ],
+  8: [
+    { id: 'a', status: true },
+    { id: 'b', status: true },
+    { id: 'c', status: true },
+    { id: 'd', status: true },
+    { id: 'e', status: true },
+    { id: 'f', status: true },
+    { id: 'g', status: true },
+  ],
+  9: [
+    { id: 'a', status: true },
+    { id: 'b', status: true },
+    { id: 'c', status: true },
+    { id: 'd', status: true },
+    { id: 'e', status: false },
+    { id: 'f', status: true },
+    { id: 'g', status: true },
+  ],
+  '+': [{ id: 'a', status: true }, { id: 'b', status: true }],
+  '-': [{ id: 'a', status: true }, { id: 'b', status: false }],
+  '=': [{ id: 'a', status: true }, { id: 'b', status: true }],
 };
 
-// Custom hook for drag and touch handling
-const useDragDrop = (matchsticks, setEquation, index, VerifyHandler, ShowMoves, UseMoves) => {
-  const [isDragging, setIsDragging] = useState(false);
-  const [touchStart, setTouchStart] = useState(null);
-
-  const handleDragStart = (matchIndex) => (e) => {
-    if (matchsticks[matchIndex]?.status) {
-      e.dataTransfer.setData("match", JSON.stringify({ fromIndex: index, matchIndex }));
-      setIsDragging(true);
-    } else {
-      e.preventDefault();
-    }
-  };
-
-  const handleTouchStart = (matchIndex) => (e) => {
-    if (matchsticks[matchIndex]?.status) {
-      setTouchStart({ x: e.touches[0].clientX, y: e.touches[0].clientY, fromIndex: index, matchIndex });
-      setIsDragging(true);
-      e.preventDefault();
-    }
-  };
-
-  const handleTouchMove = (e) => {
-    if (!touchStart) return;
-    
-    // Calculate distance moved
-    const touch = e.touches[0];
-    const deltaX = Math.abs(touch.clientX - touchStart.x);
-    const deltaY = Math.abs(touch.clientY - touchStart.y);
-    
-    // If moved significantly, consider it a drag
-    if (deltaX > 10 || deltaY > 10) {
-      e.preventDefault();
-    }
-  };
-
-  const handleTouchEnd = (matchIndex) => (e) => {
-    if (!touchStart) return;
-
-    // Find the drop target based on touch position
-    const touch = e.changedTouches[0];
-    const elements = document.elementsFromPoint(touch.clientX, touch.clientY);
-    
-    // Look for a valid drop target (matchstick that's not active)
-    const dropTarget = elements.find(el => 
-      el.classList.contains('matchstick-drop-target') && 
-      !el.classList.contains('matchstick-active')
-    );
-
-    if (dropTarget) {
-      const dropData = JSON.parse(dropTarget.dataset.matchInfo || '{}');
-      handleDropTransfer(touchStart.fromIndex, touchStart.matchIndex, dropData.index, dropData.matchIndex);
-    }
-
-    setTouchStart(null);
-    setIsDragging(false);
-  };
-
-  const handleDrop = (matchIndex) => (e) => {
-    e.preventDefault();
-    if (!matchsticks[matchIndex]?.status) {
-      const data = e.dataTransfer.getData("match");
-      if (!data) return;
-      const { fromIndex, matchIndex: fromMatchIndex } = JSON.parse(data);
-      handleDropTransfer(fromIndex, fromMatchIndex, index, matchIndex);
-    }
-  };
-
-  const handleDropTransfer = (fromIndex, fromMatchIndex, toIndex, toMatchIndex) => {
-    setEquation((prev) => {
-      const newEquation = [...prev];
-
-      if (newEquation[fromIndex]?.matchsticks[fromMatchIndex]?.status) {
-        newEquation[fromIndex].matchsticks[fromMatchIndex].status = false;
-        newEquation[toIndex].matchsticks[toMatchIndex].status = true;
-
-        const currentSegments = newEquation[toIndex].matchsticks.map(({ id, status }) => ({ id, status }));
-
-        const newValue = Object.entries(Patterns).find(([key, pattern]) =>
-          pattern.length === currentSegments.length &&
-          pattern.every((seg, i) => seg.id === currentSegments[i].id && seg.status === currentSegments[i].status)
-        )?.[0] || newEquation[toIndex].value;
-
-        newEquation[toIndex].value = newValue;
-      }
-
-      return newEquation;
-    });
-
-    if (ShowMoves < UseMoves) {
-      VerifyHandler();
-    }
-  };
-
-  return { 
-    handleDragStart, 
-    handleDrop, 
-    handleTouchStart, 
-    handleTouchMove, 
-    handleTouchEnd,
-    isDragging 
-  };
-};
-
-// Updated MatchStick Component (Vertical)
-const MatchStick = ({ match, onDragStart, onDrop, onTouchStart, onTouchMove, onTouchEnd, isDragging }) => {
+// MatchStick Component (Vertical)
+const MatchStick = ({ match, onDragStart, onDrop }) => {
   const [hover, setHover] = useState(false);
 
   return (
     <div
       className={`h-full w-[6px] sm:w-[8px] md:w-[10px] lg:w-[12px] relative rounded-sm transition-all duration-200 
-        ${match?.status ? "cursor-grab hover:shadow-lg active:cursor-grabbing" : "cursor-pointer"} 
-        ${hover ? "bg-gray-300" : "bg-gray-800"}
-        ${match?.status ? 'matchstick-active' : 'matchstick-drop-target'}`}
+        ${match?.status ? "cursor-grab hover:shadow-lg" : "cursor-pointer"} 
+        ${hover ? "bg-gray-300" : "bg-gray-800"}`}
       draggable={match?.status}
-      data-match-info={JSON.stringify({ index: match?.index, matchIndex: match?.matchIndex })}
       onDragStart={onDragStart}
       onDragOver={(e) => {
         if (!match?.status) e.preventDefault();
@@ -150,16 +118,9 @@ const MatchStick = ({ match, onDragStart, onDrop, onTouchStart, onTouchMove, onT
         if (!match?.status) setHover(true);
       }}
       onDragLeave={() => setHover(false)}
-      onDrop={onDrop}
-      // Touch events
-      onTouchStart={onTouchStart}
-      onTouchMove={onTouchMove}
-      onTouchEnd={onTouchEnd}
-      style={{
-        touchAction: match?.status ? 'none' : 'auto',
-        userSelect: 'none',
-        WebkitUserSelect: 'none',
-        WebkitTouchCallout: 'none'
+      onDrop={(e) => {
+        setHover(false);
+        onDrop(e);
       }}
     >
       {match?.status && (
@@ -171,18 +132,16 @@ const MatchStick = ({ match, onDragStart, onDrop, onTouchStart, onTouchMove, onT
   );
 };
 
-// Updated MatchStickHorizontal Component
-const MatchStickHorizontal = ({ match, onDragStart, onDrop, onTouchStart, onTouchMove, onTouchEnd, isDragging }) => {
+// MatchStickHorizontal Component
+const MatchStickHorizontal = ({ match, onDragStart, onDrop }) => {
   const [hover, setHover] = useState(false);
 
   return (
     <div
       className={`w-full h-[6px] sm:h-[8px] md:h-[10px] lg:h-[12px] relative rounded-sm transition-all duration-200 
-        ${match?.status ? "cursor-grab hover:shadow-lg active:cursor-grabbing" : "cursor-pointer"} 
-        ${hover ? "bg-gray-300" : "bg-gray-800"}
-        ${match?.status ? 'matchstick-active' : 'matchstick-drop-target'}`}
+        ${match?.status ? "cursor-grab hover:shadow-lg" : "cursor-pointer"} 
+        ${hover ? "bg-gray-300" : "bg-gray-800"}`}
       draggable={match?.status}
-      data-match-info={JSON.stringify({ index: match?.index, matchIndex: match?.matchIndex })}
       onDragStart={onDragStart}
       onDragOver={(e) => {
         if (!match?.status) e.preventDefault();
@@ -191,218 +150,157 @@ const MatchStickHorizontal = ({ match, onDragStart, onDrop, onTouchStart, onTouc
         if (!match?.status) setHover(true);
       }}
       onDragLeave={() => setHover(false)}
-      onDrop={onDrop}
-      // Touch events
-      onTouchStart={onTouchStart}
-      onTouchMove={onTouchMove}
-      onTouchEnd={onTouchEnd}
-      style={{
-        touchAction: match?.status ? 'none' : 'auto',
-        userSelect: 'none',
-        WebkitUserSelect: 'none',
-        WebkitTouchCallout: 'none'
+      onDrop={(e) => {
+        setHover(false);
+        onDrop(e);
       }}
     >
       {match?.status && (
         <div className="w-full h-full bg-gradient-to-r from-yellow-200 via-yellow-300 to-yellow-400 rounded-sm relative z-10">
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 h-[8px] sm:h-[10px] md:h-[12px] lg:h-[14px] w-[10px] sm:w-[12px] md:w-[14px] lg:w-[16px] rounded-sm bg-gradient-to-r from-red-600 via-red-700 to-red-900 shadow-md border border-red-800" />
+
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 h-[8px] sm:h-[10px] md:h-[12px] lg:h-[14px] w-[10px] sm:w-[12px] md:w-[14px] lg:w-[16px] rounded-sm bg-gradient-to-r from-red-600 via-red-700 to-red-900 shadow-md border border-red-800 " />
+
         </div>
       )}
     </div>
   );
 };
 
-// Updated Num Component
-const Num = ({ matchsticks, setEquation, numIndex, VerifyHandler, ShowMoves, UseMoves }) => {
-  const { handleDragStart, handleDrop, handleTouchStart, handleTouchMove, handleTouchEnd, isDragging } = 
-    useDragDrop(matchsticks, setEquation, numIndex, VerifyHandler, ShowMoves, UseMoves);
+// useDragDrop Hook (unchanged)
+const useDragDrop = (matchsticks, setEquation, index, VerifyHandler, ShowMoves, UseMoves) => {
+  const handleDragStart = (matchIndex) => (e) => {
+    if (matchsticks[matchIndex]?.status) {
+      e.dataTransfer.setData("match", JSON.stringify({ fromIndex: index, matchIndex }));
+    } else {
+      e.preventDefault();
+    }
+  };
 
-  // Add index info to matchsticks for touch events
-  const enhancedMatchsticks = matchsticks.map((match, matchIndex) => ({
-    ...match,
-    index: numIndex,
-    matchIndex
-  }));
+  const handleDrop = (matchIndex) => (e) => {
+    e.preventDefault();
+    if (!matchsticks[matchIndex]?.status) {
+      const data = e.dataTransfer.getData("match");
+      if (!data) return;
+      const { fromIndex, matchIndex: fromMatchIndex } = JSON.parse(data);
+
+      setEquation((prev) => {
+        const newEquation = [...prev];
+
+        if (newEquation[fromIndex]?.matchsticks[fromMatchIndex]?.status) {
+          newEquation[fromIndex].matchsticks[fromMatchIndex].status = false;
+          newEquation[index].matchsticks[matchIndex].status = true;
+
+          const currentSegments = newEquation[index].matchsticks.map(({ id, status }) => ({ id, status }));
+
+          const newValue = Object.entries(Patterns).find(([key, pattern]) =>
+            pattern.length === currentSegments.length &&
+            pattern.every((seg, i) => seg.id === currentSegments[i].id && seg.status === currentSegments[i].status)
+          )?.[0] || newEquation[index].value;
+
+          newEquation[index].value = newValue;
+        }
+
+        return newEquation;
+      });
+
+      if (ShowMoves < UseMoves) {
+        VerifyHandler();
+      }
+    }
+  };
+
+  return { handleDragStart, handleDrop };
+};
+// Num Component (Seven-Segment Display)
+const Num = ({ matchsticks, setEquation, numIndex, VerifyHandler, ShowMoves, UseMoves }) => {
+  const { handleDragStart, handleDrop } = useDragDrop(matchsticks, setEquation, numIndex, VerifyHandler, ShowMoves, UseMoves);
 
   return (
     <div className="relative h-[80px] w-[40px] sm:h-[100px] sm:w-[50px] md:h-[120px] md:w-[60px] lg:h-[140px] lg:w-[70px] xl:h-[160px] xl:w-[80px] mx-1 sm:mx-2">
       {/* Top Horizontal (a) */}
       <div className="absolute top-0 left-0 w-full h-[6px] sm:h-[8px] md:h-[10px] lg:h-[12px]">
-        <MatchStickHorizontal 
-          match={enhancedMatchsticks[0]} 
-          onDragStart={handleDragStart(0)} 
-          onDrop={handleDrop(0)}
-          onTouchStart={handleTouchStart(0)}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd(0)}
-          isDragging={isDragging}
-        />
+        <MatchStickHorizontal match={matchsticks[0]} onDragStart={handleDragStart(0)} onDrop={handleDrop(0)} />
       </div>
       {/* Top-Left Vertical (b) */}
       <div className="absolute top-[6px] sm:top-[8px] md:top-[10px] lg:top-[12px] left-0 h-[32px] sm:h-[40px] md:h-[48px] lg:h-[56px] xl:h-[64px] w-[6px] sm:w-[8px] md:w-[10px] lg:w-[12px]">
-        <MatchStick 
-          match={enhancedMatchsticks[1]} 
-          onDragStart={handleDragStart(1)} 
-          onDrop={handleDrop(1)}
-          onTouchStart={handleTouchStart(1)}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd(1)}
-          isDragging={isDragging}
-        />
+        <MatchStick match={matchsticks[1]} onDragStart={handleDragStart(1)} onDrop={handleDrop(1)} />
       </div>
       {/* Top-Right Vertical (c) */}
       <div className="absolute top-[6px] sm:top-[8px] md:top-[10px] lg:top-[12px] right-0 h-[32px] sm:h-[40px] md:h-[48px] lg:h-[56px] xl:h-[64px] w-[6px] sm:w-[8px] md:w-[10px] lg:w-[12px]">
-        <MatchStick 
-          match={enhancedMatchsticks[2]} 
-          onDragStart={handleDragStart(2)} 
-          onDrop={handleDrop(2)}
-          onTouchStart={handleTouchStart(2)}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd(2)}
-          isDragging={isDragging}
-        />
+        <MatchStick match={matchsticks[2]} onDragStart={handleDragStart(2)} onDrop={handleDrop(2)} />
       </div>
       {/* Middle Horizontal (d) */}
       <div className="absolute top-[38px] sm:top-[48px] md:top-[58px] lg:top-[68px] xl:top-[76px] left-0 w-full h-[6px] sm:h-[8px] md:h-[10px] lg:h-[12px]">
-        <MatchStickHorizontal 
-          match={enhancedMatchsticks[3]} 
-          onDragStart={handleDragStart(3)} 
-          onDrop={handleDrop(3)}
-          onTouchStart={handleTouchStart(3)}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd(3)}
-          isDragging={isDragging}
-        />
+        <MatchStickHorizontal match={matchsticks[3]} onDragStart={handleDragStart(3)} onDrop={handleDrop(3)} />
       </div>
       {/* Bottom-Left Vertical (e) */}
       <div className="absolute bottom-[6px] sm:bottom-[8px] md:bottom-[10px] lg:bottom-[12px] left-0 h-[32px] sm:h-[40px] md:h-[48px] lg:h-[56px] xl:h-[64px] w-[6px] sm:w-[8px] md:w-[10px] lg:w-[12px]">
-        <MatchStick 
-          match={enhancedMatchsticks[4]} 
-          onDragStart={handleDragStart(4)} 
-          onDrop={handleDrop(4)}
-          onTouchStart={handleTouchStart(4)}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd(4)}
-          isDragging={isDragging}
-        />
+        <MatchStick match={matchsticks[4]} onDragStart={handleDragStart(4)} onDrop={handleDrop(4)} />
       </div>
       {/* Bottom-Right Vertical (f) */}
       <div className="absolute bottom-[6px] sm:bottom-[8px] md:bottom-[10px] lg:bottom-[12px] right-0 h-[32px] sm:h-[40px] md:h-[48px] lg:h-[56px] xl:h-[64px] w-[6px] sm:w-[8px] md:w-[10px] lg:w-[12px]">
-        <MatchStick 
-          match={enhancedMatchsticks[5]} 
-          onDragStart={handleDragStart(5)} 
-          onDrop={handleDrop(5)}
-          onTouchStart={handleTouchStart(5)}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd(5)}
-          isDragging={isDragging}
-        />
+        <MatchStick match={matchsticks[5]} onDragStart={handleDragStart(5)} onDrop={handleDrop(5)} />
       </div>
       {/* Bottom Horizontal (g) */}
       <div className="absolute bottom-0 left-0 w-full h-[6px] sm:h-[8px] md:h-[10px] lg:h-[12px]">
-        <MatchStickHorizontal 
-          match={enhancedMatchsticks[6]} 
-          onDragStart={handleDragStart(6)} 
-          onDrop={handleDrop(6)}
-          onTouchStart={handleTouchStart(6)}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd(6)}
-          isDragging={isDragging}
-        />
+        <MatchStickHorizontal match={matchsticks[6]} onDragStart={handleDragStart(6)} onDrop={handleDrop(6)} />
       </div>
     </div>
   );
 };
 
-// Updated Operator Component
+// Operator Component (+)
+// Operator Component (+) adjusted
 const Operator = ({ matchsticks, setEquation, operatorIndex, VerifyHandler, ShowMoves, UseMoves }) => {
-  const { handleDragStart, handleDrop, handleTouchStart, handleTouchMove, handleTouchEnd, isDragging } = 
-    useDragDrop(matchsticks, setEquation, operatorIndex, VerifyHandler, ShowMoves, UseMoves);
-
-  const enhancedMatchsticks = matchsticks.map((match, matchIndex) => ({
-    ...match,
-    index: operatorIndex,
-    matchIndex
-  }));
+  const { handleDragStart, handleDrop } = useDragDrop(matchsticks, setEquation, operatorIndex, VerifyHandler, ShowMoves, UseMoves);
 
   return (
     <div className="relative h-[80px] w-[40px] sm:h-[100px] sm:w-[50px] md:h-[120px] md:w-[60px] lg:h-[140px] lg:w-[70px] xl:h-[160px] xl:w-[80px] mx-1 sm:mx-2 flex items-center justify-center">
       {/* Horizontal Bar */}
       <div className="absolute top-1/2 left-0 w-full h-[6px] sm:h-[8px] md:h-[10px] lg:h-[12px] -translate-y-1/2 z-50">
-        <MatchStickHorizontal 
-          match={enhancedMatchsticks[0]} 
-          onDragStart={handleDragStart(0)} 
-          onDrop={handleDrop(0)}
-          onTouchStart={handleTouchStart(0)}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd(0)}
-          isDragging={isDragging}
-        />
+        <MatchStickHorizontal match={matchsticks[0]} onDragStart={handleDragStart(0)} onDrop={handleDrop(0)} />
       </div>
+
       {/* Vertical Bar */}
-      <div className="absolute left-1/2 top-1/2 h-[62%] w-[6px] sm:w-[8px] md:w-[10px] lg:w-[12px] -translate-x-1/2 -translate-y-1/2">
+    <div className="absolute left-1/2 top-1/2 h-[62%] w-[6px] sm:w-[8px] md:w-[10px] lg:w-[12px] -translate-x-1/2 -translate-y-1/2">
         <MatchStick
-          match={enhancedMatchsticks[1]}
+          match={matchsticks[1]}
           onDragStart={handleDragStart(1)}
           onDrop={handleDrop(1)}
-          onTouchStart={handleTouchStart(1)}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd(1)}
-          isDragging={isDragging}
         />
       </div>
     </div>
   );
 };
 
-// Updated Equals Component
-const Equals = ({ matchsticks, setEquation, equalsIndex, VerifyHandler, ShowMoves, UseMoves }) => {
-  const { handleDragStart, handleDrop, handleTouchStart, handleTouchMove, handleTouchEnd, isDragging } = 
-    useDragDrop(matchsticks, setEquation, equalsIndex, VerifyHandler, ShowMoves, UseMoves);
 
-  const enhancedMatchsticks = matchsticks.map((match, matchIndex) => ({
-    ...match,
-    index: equalsIndex,
-    matchIndex
-  }));
+// Equals Component (=)
+const Equals = ({ matchsticks, setEquation, equalsIndex, VerifyHandler, ShowMoves, UseMoves }) => {
+  const { handleDragStart, handleDrop } = useDragDrop(matchsticks, setEquation, equalsIndex, VerifyHandler, ShowMoves, UseMoves);
 
   return (
     <div className="relative h-[80px] w-[40px] sm:h-[100px] sm:w-[50px] md:h-[120px] md:w-[60px] lg:h-[140px] lg:w-[70px] xl:h-[160px] xl:w-[80px] mx-1 sm:mx-2 flex flex-col items-center justify-center gap-[8px] sm:gap-[10px] md:gap-[12px] lg:gap-[14px]">
       {/* Top Horizontal */}
       <div className="w-full h-[6px] sm:h-[8px] md:h-[10px] lg:h-[12px]">
-        <MatchStickHorizontal 
-          match={enhancedMatchsticks[0]} 
-          onDragStart={handleDragStart(0)} 
-          onDrop={handleDrop(0)}
-          onTouchStart={handleTouchStart(0)}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd(0)}
-          isDragging={isDragging}
-        />
+        <MatchStickHorizontal match={matchsticks[0]} onDragStart={handleDragStart(0)} onDrop={handleDrop(0)} />
       </div>
       {/* Bottom Horizontal */}
       <div className="w-full h-[6px] sm:h-[8px] md:h-[10px] lg:h-[12px]">
-        <MatchStickHorizontal 
-          match={enhancedMatchsticks[1]} 
-          onDragStart={handleDragStart(1)} 
-          onDrop={handleDrop(1)}
-          onTouchStart={handleTouchStart(1)}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd(1)}
-          isDragging={isDragging}
-        />
+        <MatchStickHorizontal match={matchsticks[1]} onDragStart={handleDragStart(1)} onDrop={handleDrop(1)} />
       </div>
     </div>
   );
 };
 
-// EquationComponent (unchanged)
+// EquationComponent
 const EquationComponent = ({ item, index, setEquation, VerifyHandler, ShowMoves, UseMoves }) => {
   switch (item.id) {
     case "number":
       return <Num matchsticks={item.matchsticks} setEquation={setEquation} numIndex={index} VerifyHandler={VerifyHandler} ShowMoves={ShowMoves} UseMoves={UseMoves} />;
+      
     case "operator":
       return <Operator matchsticks={item.matchsticks} setEquation={setEquation} operatorIndex={index} VerifyHandler={VerifyHandler} ShowMoves={ShowMoves} UseMoves={UseMoves} />;
+
     case "equals":
       return <Equals matchsticks={item.matchsticks} setEquation={setEquation} equalsIndex={index} VerifyHandler={VerifyHandler} ShowMoves={ShowMoves} UseMoves={UseMoves} />;
     case "result":
@@ -412,19 +310,22 @@ const EquationComponent = ({ item, index, setEquation, VerifyHandler, ShowMoves,
   }
 };
 
-// Main Component (unchanged)
+
+// Main Component
 export default function MatchstickMathPuzzlePlay() {
-  // ... (your existing main component code remains the same)
+
   const { MatchistickPuzzleFetch, MatchistickPuzzles,AllMatchistickPuzzles, usertoken, notify,user } = useContext(Context);
   const [equation, setEquation] = useState([]);
   const [useMoves, setUseMoves] = useState(0);
   const [showMoves, setShowMoves] = useState(0);
+
+// console.log(useMoves,showMoves);
+
   const [congrats, setCongrats] = useState(false);
+
   const [failedPopup, setFailedPopup] = useState(false);
+
   const { id } = useParams();
-
-  // ... rest of your main component code
-
 
 const  Nextindex = AllMatchistickPuzzles?.findIndex(d=>d?._id ==id)+1
 
