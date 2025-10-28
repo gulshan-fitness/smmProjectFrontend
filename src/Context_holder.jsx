@@ -279,7 +279,7 @@ const [Top10Users, setTop10Users] = useState([]);
 
     let api =`${import.meta.env.VITE_API_BASE_URL}${
       import.meta.env.VITE_USER_URL
-    }read` ;
+    }/read` ;
     
     if (id) {
       api += `/${id}`;
@@ -312,7 +312,7 @@ const [Top10Users, setTop10Users] = useState([]);
 
     let api =`${import.meta.env.VITE_API_BASE_URL}${
       import.meta.env.VITE_USER_URL
-    }top10User` ;
+    }/top10User` ;
     
    
 
