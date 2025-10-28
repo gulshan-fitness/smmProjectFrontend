@@ -146,8 +146,8 @@ export default function TopBar() {
 
               { [
   { name: "Home", link: "" },
-  { name: "About", link: "/about" },
-  { name: "Contact", link: "/contact" },
+  { name: "About", link: "about" },
+  { name: "Contact", link: "contact" },
 ]?.map((item) => (
                 <Link
                   key={item}

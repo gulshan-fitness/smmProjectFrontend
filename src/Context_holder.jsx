@@ -58,6 +58,7 @@ const [MatchistickPuzzles, setMatchistickPuzzles] = useState(null);
 
 const [MatchistickPuzzleScore, setMatchistickPuzzleScore] = useState(null);
 const [UsersList, setUsersList] = useState([]);
+const [Top10Users, setTop10Users] = useState([]);
 
 
   const notify = (msg, status) => {
@@ -304,6 +305,37 @@ const [UsersList, setUsersList] = useState([]);
 
       .catch((error) => {});
   };
+
+
+           const Top10StudentsFetch = () => {
+   
+
+    let api =`${import.meta.env.VITE_API_BASE_URL}${
+      import.meta.env.VITE_USER_URL
+    }top10User` ;
+    
+   
+
+     
+
+
+    axios.get(api)
+
+      .then((success) => {
+
+        if (success.data.status == 1) {
+
+          const data=success.data.topStudents;
+
+            setTop10Users(data);
+
+        }
+
+
+      })
+
+      .catch((error) => {});
+  };
   
 
 
@@ -389,7 +421,7 @@ const menu_links = [
         setSudoko,
         AllSudoko,
         setAllSudoko,
-        SudokoFetch,AllRiddles, setAllRiddles,Riddles, setRiddles,RiddlesFetch,MatchistickPuzzleFetch,AllMatchistickPuzzles,setAllMatchistickPuzzles,  MatchistickPuzzles,setMatchistickPuzzles,setMatchistickPuzzleScore,MatchistickPuzzleScore,MatchistickPuzzleScoreFetch,UsersFetch,UsersList,setUsersList
+        SudokoFetch,AllRiddles, setAllRiddles,Riddles, setRiddles,RiddlesFetch,MatchistickPuzzleFetch,AllMatchistickPuzzles,setAllMatchistickPuzzles,  MatchistickPuzzles,setMatchistickPuzzles,setMatchistickPuzzleScore,MatchistickPuzzleScore,MatchistickPuzzleScoreFetch,UsersFetch,UsersList,setUsersList,Top10Users, setTop10Users,Top10StudentsFetch
       }}
     >
       {props.children}
