@@ -131,8 +131,6 @@ function App() {
       </AdminProtectedRoutes>
           
           
-
-
         },
 
         
@@ -149,10 +147,10 @@ function App() {
           {
           path: "/crosswordpuzzle",
           element: (
-
             <UserProtectedRouts>
 <CrosswordPuzzleList />
             </UserProtectedRouts> 
+
         ),
         },
 
@@ -325,8 +323,11 @@ function App() {
   </>
 
   return (
+
      <Suspense fallback={<Loading />}>
-      <RouterProvider router={routes} />
+
+      <RouterProvider  router={routes} />
+
     </Suspense>
  
 );
