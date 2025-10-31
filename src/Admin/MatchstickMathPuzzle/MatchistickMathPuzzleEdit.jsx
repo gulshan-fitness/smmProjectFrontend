@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -13,11 +12,8 @@ export default function MatchistickMathPuzzleEdit(){
   const navigate = useNavigate();
   
   const [game, setGame] = useState("");
-
   const [result, setResult] = useState("");
-  
   const [hint, setHint] = useState("");
-
   const [gameBackenddata, setGameBackenddata] = useState([]);
   const [resultBackenddata, setResultBackenddata] = useState([]);
   const [level, setLevel] = useState("");
@@ -30,7 +26,7 @@ export default function MatchistickMathPuzzleEdit(){
   });
 
   useEffect(() => {
-MatchistickPuzzleFetch(id)
+    MatchistickPuzzleFetch(id)
   }, [id]);
 
   const Patterns = {
@@ -113,51 +109,11 @@ MatchistickPuzzleFetch(id)
         setResultBackenddata(MatchistickPuzzles?.result);
       }
 
-
-
     },
     [MatchistickPuzzles]
   )
 
-  // const fetchPuzzleData = async () => {
-  //   try {
-  //     setFetchLoading(true);
-  //     const response = await axios.get(
-  //       `${import.meta.env.VITE_API_BASE_URL}${import.meta.env.VITE_MATCHSTICKPUZZLE_URL}read/${id}`,
-  //       {
-  //         headers: {
-  //           Authorization: adminToken,
-  //         },
-  //       }
-  //     );
-      
-  //     const puzzle = response.data.data;
-  //     if (puzzle) {
-  //       // Pre-fill the form with existing data
-  //       setLevel(puzzle.level.toString());
-  //       setMoves(puzzle.move.toString());
-  //       setHint(puzzle.hint);
-        
-  //       // Convert game array to string
-  //       const gameString = puzzle.game.map(item => item.value).join('');
-  //       setGame(gameString);
-        
-  //       // Convert result array to string
-  //       const resultString = puzzle.result.map(item => item.value).join('');
-  //       setResult(resultString);
-        
-  //       // Store backend data for reference
-  //       setGameBackenddata(puzzle.game);
-  //       setResultBackenddata(puzzle.result);
-  //     }
-  //   } catch (error) {
-  //     notify('Failed to fetch puzzle data', 0);
-  //     console.error('Error fetching puzzle:', error);
-  //     navigate('/matchstick-puzzles');
-  //   } finally {
-  //     setFetchLoading(false);
-  //   }
-  // };
+
 
   const getInputSize = () => {
     if (windowSize.width < 640) return 'text-lg py-3 px-4';
@@ -332,48 +288,6 @@ MatchistickPuzzleFetch(id)
 
         {/* Main Form */}
         <div className="bg-[#111]/90 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-[#ffd700]/20 shadow-2xl shadow-[#ffd700]/10 p-6 sm:p-8 md:p-10 mb-8">
-          {/* Level and Moves */}
-          <div className={`grid ${gridLayout} mb-8`}>
-            <div className="space-y-2">
-              <label className="block text-[#ffd700] text-sm font-semibold mb-2">
-                Level Number
-              </label>
-              <input
-                type="number"
-                value={level}
-                onChange={(e) => setLevel(e.target.value)}
-                placeholder="Enter level number"
-                className={`w-full bg-[#1a1a1a] border border-[#ffd700]/30 rounded-xl text-white placeholder-[#ffd700]/40 focus:outline-none focus:ring-2 focus:ring-[#ffd700] focus:border-transparent transition-all duration-300 ${inputSize}`}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-[#ffd700] text-sm font-semibold mb-2">
-                Allowed Moves
-              </label>
-              <input
-                type="number"
-                value={moves}
-                onChange={(e) => setMoves(e.target.value)}
-                placeholder="Enter number of moves"
-                className={`w-full bg-[#1a1a1a] border border-[#ffd700]/30 rounded-xl text-white placeholder-[#ffd700]/40 focus:outline-none focus:ring-2 focus:ring-[#ffd700] focus:border-transparent transition-all duration-300 ${inputSize}`}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-[#ffd700] text-sm font-semibold mb-2">
-                Hint
-              </label>
-              <input
-                type="text"
-                value={hint}
-                onChange={(e) => setHint(e.target.value)}
-                placeholder="Enter puzzle hint"
-                className={`w-full bg-[#1a1a1a] border border-[#ffd700]/30 rounded-xl text-white placeholder-[#ffd700]/40 focus:outline-none focus:ring-2 focus:ring-[#ffd700] focus:border-transparent transition-all duration-300 ${inputSize}`}
-              />
-            </div>
-          </div>
-
           {/* Puzzle Inputs */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8">
             {/* Puzzle Input */}
@@ -443,8 +357,108 @@ MatchistickPuzzleFetch(id)
             </div>
           </div>
 
+          {/* Hint and Moves Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8">
+            {/* Hint Input */}
+            <div className="bg-[#1a1a1a] rounded-2xl p-6 border border-[#ffd700]/20">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg sm:text-xl font-semibold text-[#ffd700]">
+                  Puzzle Hint
+                </h3>
+                <div className="w-8 h-8 bg-[#ffd700]/20 rounded-lg flex items-center justify-center border border-[#ffd700]/30">
+                  <svg className="w-4 h-4 text-[#ffd700]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  </svg>
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                <label className="block text-[#ffd700]/80 text-sm mb-2">
+                  Provide a helpful hint for solving the puzzle
+                </label>
+                <textarea
+                  value={hint}
+                  onChange={(e) => setHint(e.target.value)}
+                  placeholder="Example: Try moving one matchstick from the first number to make a different number..."
+                  rows="3"
+                  className={`w-full bg-[#1a1a1a] border border-[#ffd700]/30 rounded-xl text-white placeholder-[#ffd700]/40 focus:outline-none focus:ring-2 focus:ring-[#ffd700] focus:border-transparent transition-all duration-300 resize-none ${inputSize}`}
+                />
+                <p className="text-xs text-[#ffd700]/60">
+                  Give players a clue without revealing the solution
+                </p>
+              </div>
+            </div>
+
+            {/* Moves Input */}
+            <div className="bg-[#1a1a1a] rounded-2xl p-6 border border-[#ffd700]/20">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg sm:text-xl font-semibold text-[#ffd700]">
+                  Maximum Moves
+                </h3>
+                <div className="w-8 h-8 bg-[#ffd700]/20 rounded-lg flex items-center justify-center border border-[#ffd700]/30">
+                  <svg className="w-4 h-4 text-[#ffd700]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                <label className="block text-[#ffd700]/80 text-sm mb-2">
+                  Number of matchstick moves allowed
+                </label>
+                <input
+                  type="number"
+                  value={moves}
+                  onChange={(e) => setMoves(e.target.value)}
+                  placeholder="Example: 1"
+                  min="1"
+                  max="10"
+                  className={`w-full bg-[#1a1a1a] border border-[#ffd700]/30 rounded-xl text-white placeholder-[#ffd700]/40 focus:outline-none focus:ring-2 focus:ring-[#ffd700] focus:border-transparent transition-all duration-300 ${inputSize}`}
+                />
+                <p className="text-xs text-[#ffd700]/60">
+                  Typically 1-3 moves for challenging puzzles
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Level Information */}
+          <div className="bg-[#1a1a1a] rounded-2xl p-6 border border-[#ffd700]/20 mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg sm:text-xl font-semibold text-[#ffd700]">
+                Level Information
+              </h3>
+              <div className="w-8 h-8 bg-[#ffd700]/20 rounded-lg flex items-center justify-center border border-[#ffd700]/30">
+                <svg className="w-4 h-4 text-[#ffd700]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="text-center">
+                <p className="text-[#ffd700]/60 text-sm mb-1">Current Level</p>
+                <div className="bg-[#111] rounded-xl p-3 border border-[#ffd700]/20">
+                  <p className="text-2xl font-bold text-[#ffd700]">{level}</p>
+                </div>
+              </div>
+              <div className="text-center">
+                <p className="text-[#ffd700]/60 text-sm mb-1">Moves Allowed</p>
+                <div className="bg-[#111] rounded-xl p-3 border border-[#ffd700]/20">
+                  <p className="text-2xl font-bold text-[#ffd700]">{moves}</p>
+                </div>
+              </div>
+              <div className="text-center">
+                <p className="text-[#ffd700]/60 text-sm mb-1">Puzzle ID</p>
+                <div className="bg-[#111] rounded-xl p-3 border border-[#ffd700]/20">
+                  <p className="text-lg font-bold text-[#ffd700]">#{id}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Preview Section */}
-          {(game || result) && (
+          {(game || result || hint || moves) && (
             <div className="bg-[#1a1a1a] rounded-2xl p-6 border border-[#ffd700]/10 mb-8">
               <h3 className="text-lg font-semibold text-[#ffd700] mb-4">Preview</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -465,6 +479,26 @@ MatchistickPuzzleFetch(id)
                   </div>
                 )}
               </div>
+              {(hint || moves) && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                  {hint && (
+                    <div className="text-center">
+                      <p className="text-[#ffd700]/60 text-sm mb-2">Hint Preview</p>
+                      <div className="bg-[#111] rounded-xl p-4 border border-[#ffd700]/20">
+                        <p className="text-sm text-[#ffd700]/80">{hint}</p>
+                      </div>
+                    </div>
+                  )}
+                  {moves && (
+                    <div className="text-center">
+                      <p className="text-[#ffd700]/60 text-sm mb-2">Moves Allowed</p>
+                      <div className="bg-[#111] rounded-xl p-4 border border-[#ffd700]/20">
+                        <p className="text-2xl font-bold text-[#ffd700]">{moves}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
 
@@ -496,7 +530,24 @@ MatchistickPuzzleFetch(id)
               )}
             </button>
             
-           
+            <button
+              onClick={CancelHandler}
+              disabled={isLoading}
+              className={`
+                bg-gradient-to-r from-[#1a1a1a] to-[#2a2a2a] hover:from-[#2a2a2a] hover:to-[#1a1a1a]
+                text-[#ffd700] font-bold rounded-xl shadow-2xl shadow-black/30 transform transition-all duration-300 
+                hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed
+                border border-[#ffd700]/30
+                ${buttonSize} flex-1
+              `}
+            >
+              <div className="flex items-center space-x-2 justify-center">
+                <svg className="w-5 h-5 text-[#ffd700]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                <span>Cancel</span>
+              </div>
+            </button>
           </div>
         </div>
 
@@ -522,6 +573,10 @@ MatchistickPuzzleFetch(id)
                 <span className="text-[#ffd700] mr-2">•</span>
                 Ensure solution is achievable within moves
               </li>
+              <li className="flex items-start">
+                <span className="text-[#ffd700] mr-2">•</span>
+                Update hint to reflect any changes
+              </li>
             </ul>
             <ul className="space-y-2 text-sm sm:text-base">
               <li className="flex items-start">
@@ -530,7 +585,11 @@ MatchistickPuzzleFetch(id)
               </li>
               <li className="flex items-start">
                 <span className="text-[#ffd700] mr-2">•</span>
-                Update hint to reflect any changes
+                Moves should challenge but be solvable
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#ffd700] mr-2">•</span>
+                Hint should guide without giving away solution
               </li>
               <li className="flex items-start">
                 <span className="text-[#ffd700] mr-2">•</span>

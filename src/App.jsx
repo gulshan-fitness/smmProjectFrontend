@@ -44,6 +44,8 @@ import MatchistickMathPuzzleView from "./Admin/MatchstickMathPuzzle/MatchistickM
 import MatchistickMathPuzzleEdit from "./Admin/MatchstickMathPuzzle/MatchistickMathPuzzleEdit";
 import RiddlesEdit from "./Admin/Riddles/RiddlesEdit";
 import UserList from "./User/UserList";
+import Contact from "./Contact";
+import About from "./About";
 
 function App() {
   const { setadmin, setadminToken, setuser, setusertoken, setIsScrolled } =
@@ -120,8 +122,13 @@ function App() {
 
 
            {
-          path: "/userscount",
-          element: <UserLive />,
+          path: "/contact",
+          element: <Contact />,
+        },
+
+             {
+          path: "/about",
+          element: <About />,
         },
         {
           path: "/adminsignupitslocked",

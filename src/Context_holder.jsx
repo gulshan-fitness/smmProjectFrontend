@@ -60,6 +60,8 @@ const [MatchistickPuzzleScore, setMatchistickPuzzleScore] = useState(null);
 const [UsersList, setUsersList] = useState([]);
 const [Top10Users, setTop10Users] = useState([]);
 
+const [MatchistickCounts, setMatchistickCounts] = useState(null);
+
 
   const notify = (msg, status) => {
     toast(msg, {
@@ -244,6 +246,30 @@ const [Top10Users, setTop10Users] = useState([]);
       .catch((error) => {});
   };
 
+        const MatchistickPuzzletotalcountFetch = () => {
+   
+
+    let api =`${import.meta.env.VITE_API_BASE_URL}${
+      import.meta.env.VITE_MATCHSTICKPUZZLE_URL
+    }totalcount`;
+
+    axios.get(api)
+
+      .then((success) => {
+        if (success.data.status == 1) {
+
+          const data=success.data.TotalCounts;
+
+setMatchistickCounts(data)
+     
+        }
+      })
+
+      .catch((error) => {});
+  };
+
+  
+
 
         const MatchistickPuzzleScoreFetch = (id) => {
    
@@ -421,7 +447,7 @@ const menu_links = [
         setSudoko,
         AllSudoko,
         setAllSudoko,
-        SudokoFetch,AllRiddles, setAllRiddles,Riddles, setRiddles,RiddlesFetch,MatchistickPuzzleFetch,AllMatchistickPuzzles,setAllMatchistickPuzzles,  MatchistickPuzzles,setMatchistickPuzzles,setMatchistickPuzzleScore,MatchistickPuzzleScore,MatchistickPuzzleScoreFetch,UsersFetch,UsersList,setUsersList,Top10Users, setTop10Users,Top10StudentsFetch
+        SudokoFetch,AllRiddles, setAllRiddles,Riddles, setRiddles,RiddlesFetch,MatchistickPuzzleFetch,AllMatchistickPuzzles,setAllMatchistickPuzzles,  MatchistickPuzzles,setMatchistickPuzzles,setMatchistickPuzzleScore,MatchistickPuzzleScore,MatchistickPuzzleScoreFetch,UsersFetch,UsersList,setUsersList,Top10Users, setTop10Users,Top10StudentsFetch,setMatchistickCounts,MatchistickCounts,MatchistickPuzzletotalcountFetch
       }}
     >
       {props.children}

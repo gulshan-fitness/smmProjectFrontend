@@ -3,13 +3,12 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Context } from '../../Context_holder';
 
 export default function MatchstickMathPuzzleAdd() {
-  const { adminToken, notify } = useContext(Context);
+  const { adminToken, notify, MatchistickCounts, MatchistickPuzzletotalcountFetch } = useContext(Context);
   const [game, setGame] = useState("");
   const [result, setResult] = useState("");
   const [hint, setHint] = useState("");
-  const [gameBackenddata, setGameBackenddata] = useState([]);
-  const [resultBackenddata, setResultBackenddata] = useState([]);
-  const [level, setLevel] = useState("");
+ 
+ 
   const [moves, setMoves] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [windowSize, setWindowSize] = useState({
@@ -18,6 +17,7 @@ export default function MatchstickMathPuzzleAdd() {
   });
 
   useEffect(() => {
+    MatchistickPuzzletotalcountFetch()
     const handleResize = () => {
       setWindowSize({
         width: window.innerWidth,
@@ -30,7 +30,6 @@ export default function MatchstickMathPuzzleAdd() {
   }, []);
 
   const Patterns = {
-
     0: [
       { id: 'a', status: true }, { id: 'b', status: true }, { id: 'c', status: true },
       { id: 'd', status: false }, { id: 'e', status: true }, { id: 'f', status: true },
@@ -81,7 +80,6 @@ export default function MatchstickMathPuzzleAdd() {
       { id: 'd', status: true }, { id: 'e', status: false }, { id: 'f', status: true },
       { id: 'g', status: true },
     ],
-    
     '+': [{ id: 'a', status: true }, { id: 'b', status: true }],
     '-': [{ id: 'a', status: true }, { id: 'b', status: false }],
     '=': [{ id: 'a', status: true }, { id: 'b', status: true }],
@@ -106,7 +104,7 @@ export default function MatchstickMathPuzzleAdd() {
   };
 
   const SaveHandler = async () => {
-    if (!game || !result || !hint || !level || !moves) {
+    if (!game || !result || !hint || !MatchistickCounts || !moves) {
       notify('Please fill all fields', 0);
       return;
     }
@@ -176,7 +174,7 @@ export default function MatchstickMathPuzzleAdd() {
 
     const data = {
       game: tempGameData,
-      level: parseInt(level),
+      level: parseInt(MatchistickCounts + 1),
       move: parseInt(moves),
       hint: hint,
       result: tempResultData,
@@ -198,10 +196,10 @@ export default function MatchstickMathPuzzleAdd() {
         setGame("");
         setResult("");
         setHint("");
-        setLevel("");
         setMoves("");
-        setGameBackenddata([]);
-        setResultBackenddata([]);
+      
+      
+         MatchistickPuzzletotalcountFetch()
       }
     } catch (error) {
       notify(error.message, 0);
@@ -242,48 +240,6 @@ export default function MatchstickMathPuzzleAdd() {
 
         {/* Main Form */}
         <div className="bg-[#111]/90 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-[#ffd700]/20 shadow-2xl shadow-[#ffd700]/10 p-6 sm:p-8 md:p-10 mb-8">
-          {/* Level and Moves */}
-          <div className={`grid ${gridLayout} mb-8`}>
-            <div className="space-y-2">
-              <label className="block text-[#ffd700] text-sm font-semibold mb-2">
-                Level Number
-              </label>
-              <input
-                type="number"
-                value={level}
-                onChange={(e) => setLevel(e.target.value)}
-                placeholder="Enter level number"
-                className={`w-full bg-[#1a1a1a] border border-[#ffd700]/30 rounded-xl text-white placeholder-[#ffd700]/40 focus:outline-none focus:ring-2 focus:ring-[#ffd700] focus:border-transparent transition-all duration-300 ${inputSize}`}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-[#ffd700] text-sm font-semibold mb-2">
-                Allowed Moves
-              </label>
-              <input
-                type="number"
-                value={moves}
-                onChange={(e) => setMoves(e.target.value)}
-                placeholder="Enter number of moves"
-                className={`w-full bg-[#1a1a1a] border border-[#ffd700]/30 rounded-xl text-white placeholder-[#ffd700]/40 focus:outline-none focus:ring-2 focus:ring-[#ffd700] focus:border-transparent transition-all duration-300 ${inputSize}`}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-[#ffd700] text-sm font-semibold mb-2">
-                Hint
-              </label>
-              <input
-                type="text"
-                value={hint}
-                onChange={(e) => setHint(e.target.value)}
-                placeholder="Enter puzzle hint"
-                className={`w-full bg-[#1a1a1a] border border-[#ffd700]/30 rounded-xl text-white placeholder-[#ffd700]/40 focus:outline-none focus:ring-2 focus:ring-[#ffd700] focus:border-transparent transition-all duration-300 ${inputSize}`}
-              />
-            </div>
-          </div>
-
           {/* Puzzle Inputs */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8">
             {/* Puzzle Input */}
@@ -308,7 +264,7 @@ export default function MatchstickMathPuzzleAdd() {
                   value={game}
                   onChange={(e) => {
                     setGame(e.target.value);
-                    setGameBackenddata([]);
+                 
                   }}
                   placeholder="Example: 3+5=8"
                   className={`w-full bg-[#1a1a1a] border border-[#ffd700]/30 rounded-xl text-white placeholder-[#ffd700]/40 focus:outline-none focus:ring-2 focus:ring-[#ffd700] focus:border-transparent transition-all duration-300 ${inputSize}`}
@@ -341,7 +297,7 @@ export default function MatchstickMathPuzzleAdd() {
                   value={result}
                   onChange={(e) => {
                     setResult(e.target.value);
-                    setResultBackenddata([]);
+                   
                   }}
                   placeholder="Example: 9-5=4"
                   className={`w-full bg-[#1a1a1a] border border-[#ffd700]/30 rounded-xl text-white placeholder-[#ffd700]/40 focus:outline-none focus:ring-2 focus:ring-[#ffd700] focus:border-transparent transition-all duration-300 ${inputSize}`}
@@ -349,6 +305,100 @@ export default function MatchstickMathPuzzleAdd() {
                 <p className="text-xs text-[#ffd700]/60">
                   This should be the correct solution after moving matchsticks
                 </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Hint and Moves Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8">
+            {/* Hint Input */}
+            <div className="bg-[#1a1a1a] rounded-2xl p-6 border border-[#ffd700]/20">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg sm:text-xl font-semibold text-[#ffd700]">
+                  Puzzle Hint
+                </h3>
+                <div className="w-8 h-8 bg-[#ffd700]/20 rounded-lg flex items-center justify-center border border-[#ffd700]/30">
+                  <svg className="w-4 h-4 text-[#ffd700]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  </svg>
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                <label className="block text-[#ffd700]/80 text-sm mb-2">
+                  Provide a helpful hint for solving the puzzle
+                </label>
+                <textarea
+                  value={hint}
+                  onChange={(e) => setHint(e.target.value)}
+                  placeholder="Example: Try moving one matchstick from the first number to make a different number..."
+                  rows="3"
+                  className={`w-full bg-[#1a1a1a] border border-[#ffd700]/30 rounded-xl text-white placeholder-[#ffd700]/40 focus:outline-none focus:ring-2 focus:ring-[#ffd700] focus:border-transparent transition-all duration-300 resize-none ${inputSize}`}
+                />
+                <p className="text-xs text-[#ffd700]/60">
+                  Give players a clue without revealing the solution
+                </p>
+              </div>
+            </div>
+
+            {/* Moves Input */}
+            <div className="bg-[#1a1a1a] rounded-2xl p-6 border border-[#ffd700]/20">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg sm:text-xl font-semibold text-[#ffd700]">
+                  Maximum Moves
+                </h3>
+                <div className="w-8 h-8 bg-[#ffd700]/20 rounded-lg flex items-center justify-center border border-[#ffd700]/30">
+                  <svg className="w-4 h-4 text-[#ffd700]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                <label className="block text-[#ffd700]/80 text-sm mb-2">
+                  Number of matchstick moves allowed
+                </label>
+                <input
+                  type="number"
+                  value={moves}
+                  onChange={(e) => setMoves(e.target.value)}
+                  placeholder="Example: 1"
+                  min="1"
+                  max="10"
+                  className={`w-full bg-[#1a1a1a] border border-[#ffd700]/30 rounded-xl text-white placeholder-[#ffd700]/40 focus:outline-none focus:ring-2 focus:ring-[#ffd700] focus:border-transparent transition-all duration-300 ${inputSize}`}
+                />
+                <p className="text-xs text-[#ffd700]/60">
+                  Typically 1-3 moves for challenging puzzles
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Level Information */}
+          <div className="bg-[#1a1a1a] rounded-2xl p-6 border border-[#ffd700]/20 mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg sm:text-xl font-semibold text-[#ffd700]">
+                Level Information
+              </h3>
+              <div className="w-8 h-8 bg-[#ffd700]/20 rounded-lg flex items-center justify-center border border-[#ffd700]/30">
+                <svg className="w-4 h-4 text-[#ffd700]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="text-center">
+                <p className="text-[#ffd700]/60 text-sm mb-1">Current Level</p>
+                <div className="bg-[#111] rounded-xl p-3 border border-[#ffd700]/20">
+                  <p className="text-2xl font-bold text-[#ffd700]">{MatchistickCounts + 1}</p>
+                </div>
+              </div>
+              <div className="text-center">
+                <p className="text-[#ffd700]/60 text-sm mb-1">Total Puzzles</p>
+                <div className="bg-[#111] rounded-xl p-3 border border-[#ffd700]/20">
+                  <p className="text-2xl font-bold text-[#ffd700]">{MatchistickCounts}</p>
+                </div>
               </div>
             </div>
           </div>
@@ -375,6 +425,26 @@ export default function MatchstickMathPuzzleAdd() {
                   </div>
                 )}
               </div>
+              {(hint || moves) && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                  {hint && (
+                    <div className="text-center">
+                      <p className="text-[#ffd700]/60 text-sm mb-2">Hint Preview</p>
+                      <div className="bg-[#111] rounded-xl p-4 border border-[#ffd700]/20">
+                        <p className="text-sm text-[#ffd700]/80">{hint}</p>
+                      </div>
+                    </div>
+                  )}
+                  {moves && (
+                    <div className="text-center">
+                      <p className="text-[#ffd700]/60 text-sm mb-2">Moves Allowed</p>
+                      <div className="bg-[#111] rounded-xl p-4 border border-[#ffd700]/20">
+                        <p className="text-2xl font-bold text-[#ffd700]">{moves}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
 
@@ -430,6 +500,10 @@ export default function MatchstickMathPuzzleAdd() {
                 <span className="text-[#ffd700] mr-2">•</span>
                 Solution should be achievable within moves
               </li>
+              <li className="flex items-start">
+                <span className="text-[#ffd700] mr-2">•</span>
+                Provide clear but not obvious hints
+              </li>
             </ul>
             <ul className="space-y-2 text-sm sm:text-base">
               <li className="flex items-start">
@@ -443,6 +517,10 @@ export default function MatchstickMathPuzzleAdd() {
               <li className="flex items-start">
                 <span className="text-[#ffd700] mr-2">•</span>
                 Hint should guide without giving away solution
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#ffd700] mr-2">•</span>
+                Test puzzles before publishing
               </li>
             </ul>
           </div>

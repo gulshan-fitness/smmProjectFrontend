@@ -1,8 +1,10 @@
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
-export default function Footer() {
+export default function Footer(){
+
   return (
+
     <footer className="w-full bg-black text-[#F6FFFA] pt-10 pb-6 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
         
@@ -59,5 +61,8 @@ export default function Footer() {
         © {new Date().getFullYear()} <span className="text-[#FFD700] font-medium">MyApp</span>. All rights reserved.
       </div>
     </footer>
+
+    
   );
+
 }
