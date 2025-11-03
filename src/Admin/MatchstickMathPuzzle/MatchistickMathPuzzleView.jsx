@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { Context } from '../../Context_holder';
-import { Link } from 'react-router-dom';
+import { Link, Links } from 'react-router-dom';
 
 // Matchstick Patterns - Seven Segment Display
 const Patterns = {
@@ -60,7 +60,7 @@ const Patterns = {
   '=': [{ id: 'a', status: true }, { id: 'b', status: true }],
 };
 
-export default function AllMatchstickPuzzles() {
+export default function   AllMatchstickPuzzles() {
   const { adminToken, notify,MatchistickPuzzleFetch,AllMatchistickPuzzles } = useContext(Context);
   
   const [loading, setLoading] = useState(true);
@@ -79,9 +79,18 @@ export default function AllMatchstickPuzzles() {
 
 useEffect(
     ()=>{
-        if(AllMatchistickPuzzles?.length!=0)
+        if(AllMatchistickPuzzles?.length!=0){
+ setLoading(false)
+        }
+         
 
-setLoading(false)
+        setTimeout(() => {
+
+          setLoading(false)
+
+        }, 2000);
+
+
 
 
     },[AllMatchistickPuzzles]
@@ -204,9 +213,9 @@ setLoading(false)
               </div>
               <h3 className="text-lg font-semibold text-[#ffd700] mb-2">No Puzzles Found</h3>
               <p className="text-[#ffd700]/60 text-sm mb-4">Create your first matchstick puzzle to get started</p>
-              <button className="bg-gradient-to-r from-[#ffd700] to-[#ffed4e] text-[#111] font-semibold rounded-lg px-6 py-2 hover:shadow-lg hover:shadow-[#ffd700]/20 transition-all duration-300">
+              <Link to={"/adminprofile/matchstickpuzzle/add"} className="bg-gradient-to-r from-[#ffd700] to-[#ffed4e] text-[#111] font-semibold rounded-lg px-6 py-2 hover:shadow-lg hover:shadow-[#ffd700]/20 transition-all duration-300">
                 Create Puzzle
-              </button>
+              </Link>
             </div>
           </div>
         ) : (

@@ -152,13 +152,16 @@ export default function MatchstickPuzzleList() {
             <span>Your Progress</span>
             <span>{completedLevels.size}/{AllMatchistickPuzzles?.length || 0}</span>
           </div>
-          <div className="w-full bg-slate-800 rounded-full h-2 sm:h-3">
-            <div 
-              className="bg-gradient-to-r from-cyan-500 to-purple-600 h-2 sm:h-3 rounded-full transition-all duration-1000 ease-out"
-              style={{ 
-                width: `${(completedLevels.size / (AllMatchistickPuzzles?.length || 1)) * 100}%` 
-              }}
-            />
+          <div className=" bg-slate-800 rounded-full h-2 sm:h-3">
+         <div
+  className="bg-gradient-to-r from-cyan-500 to-purple-600 h-2 sm:h-3 rounded-full transition-all duration-1000 ease-out"
+  style={{
+    width: `${(completedLevels.size / (AllMatchistickPuzzles?.length || 1)) * 100}%`,
+    minWidth: '0%', // ensures smooth animation
+    maxWidth: '100%',
+  }}
+/>
+
           </div>
         </div>
 

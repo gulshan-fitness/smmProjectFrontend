@@ -1,14 +1,14 @@
 import axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react';
 import { Context } from '../../Context_holder';
+import matchstickPatterns from '../../MatchstickMathPuzzle/Patterns.json'; 
 
 export default function MatchstickMathPuzzleAdd() {
   const { adminToken, notify, MatchistickCounts, MatchistickPuzzletotalcountFetch } = useContext(Context);
+  
   const [game, setGame] = useState("");
   const [result, setResult] = useState("");
   const [hint, setHint] = useState("");
- 
- 
   const [moves, setMoves] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [windowSize, setWindowSize] = useState({
@@ -29,61 +29,7 @@ export default function MatchstickMathPuzzleAdd() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const Patterns = {
-    0: [
-      { id: 'a', status: true }, { id: 'b', status: true }, { id: 'c', status: true },
-      { id: 'd', status: false }, { id: 'e', status: true }, { id: 'f', status: true },
-      { id: 'g', status: true },
-    ],
-    1: [
-      { id: 'a', status: false }, { id: 'b', status: false }, { id: 'c', status: true },
-      { id: 'd', status: false }, { id: 'e', status: false }, { id: 'f', status: true },
-      { id: 'g', status: false },
-    ],
-    2: [
-      { id: 'a', status: true }, { id: 'b', status: false }, { id: 'c', status: true },
-      { id: 'd', status: true }, { id: 'e', status: true }, { id: 'f', status: false },
-      { id: 'g', status: true },
-    ],
-    3: [
-      { id: 'a', status: true }, { id: 'b', status: false }, { id: 'c', status: true },
-      { id: 'd', status: true }, { id: 'e', status: false }, { id: 'f', status: true },
-      { id: 'g', status: true },
-    ],
-    4: [
-      { id: 'a', status: false }, { id: 'b', status: true }, { id: 'c', status: true },
-      { id: 'd', status: true }, { id: 'e', status: false }, { id: 'f', status: true },
-      { id: 'g', status: false },
-    ],
-    5: [
-      { id: 'a', status: true }, { id: 'b', status: true }, { id: 'c', status: false },
-      { id: 'd', status: true }, { id: 'e', status: false }, { id: 'f', status: true },
-      { id: 'g', status: true },
-    ],
-    6: [
-      { id: 'a', status: true }, { id: 'b', status: true }, { id: 'c', status: false },
-      { id: 'd', status: true }, { id: 'e', status: true }, { id: 'f', status: true },
-      { id: 'g', status: true },
-    ],
-    7: [
-      { id: 'a', status: true }, { id: 'b', status: false }, { id: 'c', status: true },
-      { id: 'd', status: false }, { id: 'e', status: false }, { id: 'f', status: true },
-      { id: 'g', status: false },
-    ],
-    8: [
-      { id: 'a', status: true }, { id: 'b', status: true }, { id: 'c', status: true },
-      { id: 'd', status: true }, { id: 'e', status: true }, { id: 'f', status: true },
-      { id: 'g', status: true },
-    ],
-    9: [
-      { id: 'a', status: true }, { id: 'b', status: true }, { id: 'c', status: true },
-      { id: 'd', status: true }, { id: 'e', status: false }, { id: 'f', status: true },
-      { id: 'g', status: true },
-    ],
-    '+': [{ id: 'a', status: true }, { id: 'b', status: true }],
-    '-': [{ id: 'a', status: true }, { id: 'b', status: false }],
-    '=': [{ id: 'a', status: true }, { id: 'b', status: true }],
-  };
+  const Patterns = matchstickPatterns;
 
   const getInputSize = () => {
     if (windowSize.width < 640) return 'text-lg py-3 px-4';
@@ -97,90 +43,134 @@ export default function MatchstickMathPuzzleAdd() {
     return 'py-4 px-10 text-lg';
   };
 
-  const getGridLayout = () => {
-    if (windowSize.width < 768) return 'grid-cols-1 gap-4';
-    if (windowSize.width < 1024) return 'grid-cols-2 gap-6';
-    return 'grid-cols-3 gap-8';
+  // Function to process equation and split into characters/digits
+  const processEquation = (equation) => {
+    const result = [];
+    let i = 0;
+    
+    while (i < equation.length) {
+      // Check for multi-digit numbers (10-29)
+      if (i < equation.length - 1) {
+        const twoDigit = equation.substring(i, i + 2);
+        if (Patterns[twoDigit]) {
+          result.push(twoDigit);
+          i += 2;
+          continue;
+        }
+      }
+      
+      // Single character
+      result.push(equation[i]);
+      i += 1;
+    }
+    
+    return result;
   };
 
+  // Function to get matchsticks data exactly as it is from JSON
+  const getMatchsticksData = (char) => {
+    return Patterns[char];
+  };
+
+  // Function to determine ID based on character and position
+  const getCharacterId = (char, index, equationChars) => {
+    if (char === '+' || char === '-') {
+      return 'operator';
+    } else if (char === '=') {
+      return 'equals';
+    } else {
+      // For numbers, check if it's the result part (after equals)
+      const equalsIndex = equationChars.indexOf('=');
+      if (equalsIndex !== -1 && index > equalsIndex) {
+        return 'result';
+      } else {
+        return 'number';
+      }
+    }
+  };
+
+
   const SaveHandler = async () => {
-    if (!game || !result || !hint || !MatchistickCounts || !moves) {
+   
+    
+    if ( 
+
+  !game.trim() ||
+  !result.trim() ||
+  !hint.trim() ||
+  moves === "" ||
+  moves === null ||
+  MatchistickCounts === null ||
+  MatchistickCounts === undefined
+
+) {
+
       notify('Please fill all fields', 0);
+
       return;
     }
 
     setIsLoading(true);
 
-    // Process game input
-    const gameArr = game.split("");
-    const resultArr = result.split("");
-    const tempGameData = [];
-    const tempResultData = [];
-
-    // Process game array
-    gameArr.forEach((data, index) => {
-      let id;
-      if (["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].includes(data)) {
-        id = index === gameArr.length - 1 ? "result" : "number";
-        tempGameData.push({
-          id: id,
-          value: data,
-          matchsticks: [...Patterns[data]]
-        });
-      } else if (["-", "+"].includes(data)) {
-        tempGameData.push({
-          id: "operator",
-          value: data,
-          matchsticks: [...Patterns[data]]
-        });
-      } else if (data === "=") {
-        tempGameData.push({
-          id: "equals",
-          value: data,
-          matchsticks: [...Patterns[data]]
-        });
-      }
-    });
-
-    // Process result array
-    resultArr.forEach((data, index) => {
-      if (["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].includes(data)) {
-        const id = index === resultArr.length - 1 ? "result" : "number";
-        tempResultData.push({
-          id: id,
-          value: data,
-          matchsticks: [...Patterns[data]]
-        });
-      } else if (["-", "+"].includes(data)) {
-        tempResultData.push({
-          id: "operator",
-          value: data,
-          matchsticks: [...Patterns[data]]
-        });
-      } else if (data === "=") {
-        tempResultData.push({
-          id: "equals",
-          value: data,
-          matchsticks: [...Patterns[data]]
-        });
-      }
-    });
-
-    if (tempGameData.length === 0 || tempResultData.length === 0) {
-      notify('Invalid input format', 0);
-      setIsLoading(false);
-      return;
-    }
-
-    const data = {
-      game: tempGameData,
-      level: parseInt(MatchistickCounts + 1),
-      move: parseInt(moves),
-      hint: hint,
-      result: tempResultData,
-    };
-
     try {
+      // Process game input
+      const gameChars = processEquation(game);
+      const resultChars = processEquation(result);
+      const tempGameData = [];
+      const tempResultData = [];
+
+      // Process game array
+      gameChars.forEach((char, index) => {
+        const matchsticksData = getMatchsticksData(char);
+        
+        if (!matchsticksData) {
+          console.warn(`No pattern found for character: ${char}`);
+          return;
+        }
+
+        const id = getCharacterId(char, index, gameChars);
+        
+        tempGameData.push({
+          id: id,
+          value: char,
+          matchsticks: matchsticksData
+        });
+      });
+
+      // Process result array
+      resultChars.forEach((char, index) => {
+        const matchsticksData = getMatchsticksData(char);
+        
+        if (!matchsticksData) {
+          console.warn(`No pattern found for character: ${char}`);
+          return;
+        }
+
+        const id = getCharacterId(char, index, resultChars);
+        
+        tempResultData.push({
+          id: id,
+          value: char,
+          matchsticks: matchsticksData
+        });
+      });
+
+      if (tempGameData.length === 0 || tempResultData.length === 0) {
+        notify('Invalid input format or unsupported characters', 0);
+        setIsLoading(false);
+        return;
+      }
+
+      const data = {
+        game: tempGameData,
+        level: parseInt(MatchistickCounts + 1),
+        move: parseInt(moves),
+        hint: hint,
+        result: tempResultData,
+      };
+
+      console.log('Sending data:', JSON.stringify(data, null, 2));
+
       const response = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}${import.meta.env.VITE_MATCHSTICKPUZZLE_URL}add`,
         data,
@@ -197,12 +187,11 @@ export default function MatchstickMathPuzzleAdd() {
         setResult("");
         setHint("");
         setMoves("");
-      
-      
-         MatchistickPuzzletotalcountFetch()
+        MatchistickPuzzletotalcountFetch();
       }
     } catch (error) {
-      notify(error.message, 0);
+      console.error('Error creating puzzle:', error);
+      notify(error.response?.data?.msg || error.message, 0);
     } finally {
       setIsLoading(false);
     }
@@ -210,7 +199,6 @@ export default function MatchstickMathPuzzleAdd() {
 
   const inputSize = getInputSize();
   const buttonSize = getButtonSize();
-  const gridLayout = getGridLayout();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#111] via-[#0a0a0a] to-[#111] p-4 sm:p-6 md:p-8">
@@ -257,20 +245,17 @@ export default function MatchstickMathPuzzleAdd() {
               
               <div className="space-y-3">
                 <label className="block text-[#ffd700]/80 text-sm mb-2">
-                  Enter the initial equation (e.g., "3+5=8")
+                  Enter the initial equation (e.g., "10+5=15" or "3+5=8")
                 </label>
                 <input
                   type="text"
                   value={game}
-                  onChange={(e) => {
-                    setGame(e.target.value);
-                 
-                  }}
-                  placeholder="Example: 3+5=8"
+                  onChange={(e) => setGame(e.target.value)}
+                  placeholder="Examples: 10+5=15, 3+5=8, 25-13=12"
                   className={`w-full bg-[#1a1a1a] border border-[#ffd700]/30 rounded-xl text-white placeholder-[#ffd700]/40 focus:outline-none focus:ring-2 focus:ring-[#ffd700] focus:border-transparent transition-all duration-300 ${inputSize}`}
                 />
                 <p className="text-xs text-[#ffd700]/60">
-                  Use numbers (0-9), operators (+, -), and equals (=) only
+                  Supports numbers 0-29, operators (+, -), and equals (=)
                 </p>
               </div>
             </div>
@@ -290,16 +275,13 @@ export default function MatchstickMathPuzzleAdd() {
               
               <div className="space-y-3">
                 <label className="block text-[#ffd700]/80 text-sm mb-2">
-                  Enter the solved equation (e.g., "9-5=4")
+                  Enter the solved equation (e.g., "9-5=4" or "18-13=5")
                 </label>
                 <input
                   type="text"
                   value={result}
-                  onChange={(e) => {
-                    setResult(e.target.value);
-                   
-                  }}
-                  placeholder="Example: 9-5=4"
+                  onChange={(e) => setResult(e.target.value)}
+                  placeholder="Examples: 9-5=4, 18-13=5, 20-15=5"
                   className={`w-full bg-[#1a1a1a] border border-[#ffd700]/30 rounded-xl text-white placeholder-[#ffd700]/40 focus:outline-none focus:ring-2 focus:ring-[#ffd700] focus:border-transparent transition-all duration-300 ${inputSize}`}
                 />
                 <p className="text-xs text-[#ffd700]/60">
@@ -403,50 +385,50 @@ export default function MatchstickMathPuzzleAdd() {
             </div>
           </div>
 
-          {/* Preview Section */}
+{/*          
           {(game || result) && (
             <div className="bg-[#1a1a1a] rounded-2xl p-6 border border-[#ffd700]/10 mb-8">
-              <h3 className="text-lg font-semibold text-[#ffd700] mb-4">Preview</h3>
+              <h3 className="text-lg font-semibold text-[#ffd700] mb-4">Data Structure Preview</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {game && (
-                  <div className="text-center">
-                    <p className="text-[#ffd700]/60 text-sm mb-2">Puzzle</p>
+                  <div>
+                    <p className="text-[#ffd700]/60 text-sm mb-2">Puzzle Structure</p>
                     <div className="bg-[#111] rounded-xl p-4 border border-[#ffd700]/20">
-                      <p className="text-2xl sm:text-3xl font-mono text-[#ffd700]">{game}</p>
+                      <pre className="text-xs text-[#ffd700]/80 overflow-auto">
+                        {JSON.stringify(
+                          processEquation(game).map((char, index) => ({
+                            id: getCharacterId(char, index, processEquation(game)),
+                            value: char,
+                            matchsticks: getMatchsticksData(char)
+                          })),
+                          null,
+                          2
+                        )}
+                      </pre>
                     </div>
                   </div>
                 )}
                 {result && (
-                  <div className="text-center">
-                    <p className="text-[#ffd700]/60 text-sm mb-2">Solution</p>
+                  <div>
+                    <p className="text-[#ffd700]/60 text-sm mb-2">Solution Structure</p>
                     <div className="bg-[#111] rounded-xl p-4 border border-[#ffd700]/20">
-                      <p className="text-2xl sm:text-3xl font-mono text-[#ffd700]">{result}</p>
+                      <pre className="text-xs text-[#ffd700]/80 overflow-auto">
+                        {JSON.stringify(
+                          processEquation(result).map((char, index) => ({
+                            id: getCharacterId(char, index, processEquation(result)),
+                            value: char,
+                            matchsticks: getMatchsticksData(char)
+                          })),
+                          null,
+                          2
+                        )}
+                      </pre>
                     </div>
                   </div>
                 )}
               </div>
-              {(hint || moves) && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                  {hint && (
-                    <div className="text-center">
-                      <p className="text-[#ffd700]/60 text-sm mb-2">Hint Preview</p>
-                      <div className="bg-[#111] rounded-xl p-4 border border-[#ffd700]/20">
-                        <p className="text-sm text-[#ffd700]/80">{hint}</p>
-                      </div>
-                    </div>
-                  )}
-                  {moves && (
-                    <div className="text-center">
-                      <p className="text-[#ffd700]/60 text-sm mb-2">Moves Allowed</p>
-                      <div className="bg-[#111] rounded-xl p-4 border border-[#ffd700]/20">
-                        <p className="text-2xl font-bold text-[#ffd700]">{moves}</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
             </div>
-          )}
+          )} */}
 
           {/* Submit Button */}
           <div className="flex justify-center">
@@ -475,54 +457,6 @@ export default function MatchstickMathPuzzleAdd() {
                 </div>
               )}
             </button>
-          </div>
-        </div>
-
-        {/* Instructions */}
-        <div className="bg-[#111]/90 backdrop-blur-xl rounded-2xl border border-[#ffd700]/20 shadow-2xl shadow-[#ffd700]/10 p-6 sm:p-8">
-          <h3 className="text-lg sm:text-xl font-semibold text-[#ffd700] mb-4 flex items-center">
-            <svg className="w-5 h-5 mr-2 text-[#ffd700]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            Instructions
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[#ffd700]/80">
-            <ul className="space-y-2 text-sm sm:text-base">
-              <li className="flex items-start">
-                <span className="text-[#ffd700] mr-2">•</span>
-                Use numbers 0-9, operators + - = only
-              </li>
-              <li className="flex items-start">
-                <span className="text-[#ffd700] mr-2">•</span>
-                Equations must be mathematically valid
-              </li>
-              <li className="flex items-start">
-                <span className="text-[#ffd700] mr-2">•</span>
-                Solution should be achievable within moves
-              </li>
-              <li className="flex items-start">
-                <span className="text-[#ffd700] mr-2">•</span>
-                Provide clear but not obvious hints
-              </li>
-            </ul>
-            <ul className="space-y-2 text-sm sm:text-base">
-              <li className="flex items-start">
-                <span className="text-[#ffd700] mr-2">•</span>
-                Level number determines difficulty order
-              </li>
-              <li className="flex items-start">
-                <span className="text-[#ffd700] mr-2">•</span>
-                Moves should challenge but be solvable
-              </li>
-              <li className="flex items-start">
-                <span className="text-[#ffd700] mr-2">•</span>
-                Hint should guide without giving away solution
-              </li>
-              <li className="flex items-start">
-                <span className="text-[#ffd700] mr-2">•</span>
-                Test puzzles before publishing
-              </li>
-            </ul>
           </div>
         </div>
       </div>
