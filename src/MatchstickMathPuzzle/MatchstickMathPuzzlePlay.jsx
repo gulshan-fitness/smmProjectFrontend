@@ -201,12 +201,15 @@ if (showMoves >= UseMoves) {
     }
   };
 
-  console.log(ShowMoves ,UseMoves,"sjdbjd","sdbs");
+  
   
   return { handleDragStart, handleDrop };
 };
 
 const Num = ({ matchsticks, setEquation, numIndex, VerifyHandler, ShowMoves, UseMoves }) => {
+  
+  console.log(matchsticks);
+  
   const { handleDragStart, handleDrop } = useDragDrop(
     matchsticks,
     setEquation,
@@ -215,6 +218,9 @@ const Num = ({ matchsticks, setEquation, numIndex, VerifyHandler, ShowMoves, Use
     ShowMoves,
     UseMoves
   );
+
+
+  
 
   // Helper to render one digit (7-segment display)
   const renderDigit = (digitSticks, digitIndex = 0) => (
@@ -288,16 +294,24 @@ const Num = ({ matchsticks, setEquation, numIndex, VerifyHandler, ShowMoves, Use
   );
 
   // Determine how many digits (1 or 2)
-  if (!Array.isArray(matchsticks)) return null;
-  const isTwoDigit = Array.isArray(matchsticks[0]) && Array.isArray(matchsticks[0][0]);
+if (!Array.isArray(matchsticks)) return null;
 
-  // If single-digit number (like 5 → [ [ {a,b,c...} ] ])
-  if (!isTwoDigit) {
-    return <div className="flex">{renderDigit(matchsticks[0], 0)}</div>;
-  }
+// ✅ Handle one or multiple digits correctly
+if (Array.isArray(matchsticks[0]) && typeof matchsticks[0][0] === "object") {
+  // Multi-digit (e.g., 2-digit number)
+  return (
+    <div className="flex items-center gap-2">
+      {matchsticks.map((digit, digitIndex) => renderDigit(digit, digitIndex))}
+    </div>
+  );
+} else {
+  // Single-digit number
+  return <div className="flex">{renderDigit(matchsticks, 0)}</div>;
+}
 
-  // Two-digit number (like 21 → [ [a..g], [a..g] ])
-  return <div className="flex items-center gap-2">{matchsticks.map((digit, digitIndex) => renderDigit(digit, digitIndex))}</div>;
+
+
+
 };
 
 // Fixed Operator component
@@ -385,7 +399,7 @@ export default function MatchstickMathPuzzlePlay() {
     MatchistickPuzzleFetch();
   }, [id]);
 
-  console.log(equation,"equation");
+
 
   useEffect(() => {
     if (MatchistickPuzzles) {
